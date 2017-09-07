@@ -10,17 +10,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * コンサート情報Webページ
  */
 public class ConcertInfoServer
 {
 	static private final String urlBase = "http://www2.gol.com/users/ip0601170243/private/web/concert/%s";
 	static private final Pattern pattern = Pattern.compile(".*<a href=\"(.*)\".*");
 
-	public static void main(String[] args) throws IOException
-	{
-		String[] htmlLines = getHtmlLines("pastorchestra.htm");
-	}
-	
 	/**
 	 * pastorchestra.htmの内容からURLと楽団名を取得
 	 * @param lines HTML行データ
@@ -66,10 +62,6 @@ public class ConcertInfoServer
 	 */
 	static public String [] getHtmlLines(String filename) throws IOException
 	{
-		System.setProperty("proxySet", "true");
-		System.setProperty("proxyHost", "proxy-cb");
-		System.setProperty("proxyPort", "8080");
-
 		URL url = new URL(String.format(urlBase, filename));
 
 		InputStream in = url.openStream();
