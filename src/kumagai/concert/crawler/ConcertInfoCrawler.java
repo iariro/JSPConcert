@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class ConcertInfoCrawler
 {
@@ -18,10 +16,12 @@ public class ConcertInfoCrawler
 		System.setProperty("proxyPort", "8080");
 
 		String[] htmlLines = ConcertInfoServer.getHtmlLines("pastorchestra.htm");
-		HashMap<String, String> urlAndNames = ConcertInfoServer.getUrls(htmlLines);
-		for (Entry<String, String> urlAndName : urlAndNames.entrySet())
+		ArrayList<PastConcertInfo> urlAndNames = ConcertInfoServer.getUrls(htmlLines);
+		for (PastConcertInfo urlAndName : urlAndNames)
 		{
-			URL url = new URL(urlAndName.getValue());
+			System.out.println(urlAndName);
+
+			URL url = new URL(urlAndName.url);
 
 			InputStream in = url.openStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));

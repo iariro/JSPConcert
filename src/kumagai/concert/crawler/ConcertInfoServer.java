@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
  */
 public class ConcertInfoServer
 {
+	private static final String empty = "";
 	static private final String urlBase = "http://www2.gol.com/users/ip0601170243/private/web/concert/%s";
 	static private final Pattern pattern = Pattern.compile(".*<a href=\"(.*)\".*");
 
@@ -22,10 +23,11 @@ public class ConcertInfoServer
 	 * @param lines HTML行データ
 	 * @return URLと楽団名リスト
 	 */
-	static public HashMap<String, String> getUrls(String[] lines)
+	static public ArrayList<PastConcertInfo> getUrls(String[] lines)
 	{
-		HashMap<String, String> urls = new HashMap<String, String>();
+		ArrayList<PastConcertInfo> urls = new ArrayList<PastConcertInfo>();
 		String url = null;
+		String orchestra = null;
 		for (String line : lines)
 		{
 			Matcher matcher = pattern.matcher(line);
@@ -39,6 +41,7 @@ public class ConcertInfoServer
 			{
 				// それ以外
 
+				line = line.replaceAll("<.+?>", empty);
 				if (url != null)
 				{
 					// URL確定
@@ -46,8 +49,20 @@ public class ConcertInfoServer
 					line = line.trim();
 					if (line.length() > 0)
 					{
-						urls.put(line, url);
-						url = null;
+						if (orchestra == null)
+						{
+							// 楽団名がまだ→楽団名
+
+							orchestra = line;
+						}
+						else
+						{
+							// 楽団名あり→日付
+
+							urls.add(new PastConcertInfo(orchestra, url, line));
+							url = null;
+							orchestra = null;
+						}
 					}
 				}
 			}
@@ -67,14 +82,15 @@ public class ConcertInfoServer
 		InputStream in = url.openStream();
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
+		ArrayList<String> lines = new ArrayList<String>();
 		String line;
 		while ((line = br.readLine()) != null)
 		{
-			System.out.println(line);
+			lines.add(line);
 		}
 
 		in.close();
 		
-		return null;
+		return lines.toArray(new String [] {});
 	}
 }

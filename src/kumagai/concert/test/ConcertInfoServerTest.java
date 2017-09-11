@@ -1,10 +1,10 @@
 package kumagai.concert.test;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.ArrayList;
 
 import junit.framework.TestCase;
 import kumagai.concert.crawler.ConcertInfoServer;
+import kumagai.concert.crawler.PastConcertInfo;
 
 public class ConcertInfoServerTest
 	extends TestCase
@@ -22,8 +22,8 @@ public class ConcertInfoServerTest
 					"						</a>"
 			};
 
-		HashMap<String, String> urls = ConcertInfoServer.getUrls(lines);
-		for (Entry<String, String> url : urls.entrySet())
+		ArrayList<PastConcertInfo> urls = ConcertInfoServer.getUrls(lines);
+		for (PastConcertInfo url : urls)
 		{
 			System.out.println(url);
 		}
