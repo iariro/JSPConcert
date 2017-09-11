@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -17,19 +18,39 @@ public class ConcertInfoCrawler
 
 		String[] htmlLines = ConcertInfoServer.getHtmlLines("pastorchestra.htm");
 		ArrayList<PastConcertInfo> urlAndNames = ConcertInfoServer.getUrls(htmlLines);
+		PrintWriter fileWriter = new PrintWriter("NewConcert.txt");
 		for (PastConcertInfo urlAndName : urlAndNames)
 		{
 			System.out.println(urlAndName);
 
-			URL url = new URL(urlAndName.url);
+			try
+			{
+				URL url = new URL(urlAndName.url);
 
-			InputStream in = url.openStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+				InputStream in = url.openStream();
+				BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-			getConcertInfo(br);
+				fileWriter.println(urlAndName.orchestra);
+				fileWriter.println("-----------------------------------------------");
+				String[] concertInfo = getConcertInfo(br);
+				for (String line : concertInfo)
+				{
+					if (line.length() > 100)
+					{
+						line = line.substring(0, 100);
+					}
 
-			in.close();
+					fileWriter.println(line);
+				}
+
+				in.close();
+			}
+			catch (IOException exception)
+			{
+				fileWriter.println(exception.getMessage());
+			}
 		}
+		fileWriter.close();
 	}
 
 	static public String [] getConcertInfo(BufferedReader reader)
@@ -64,7 +85,7 @@ public class ConcertInfoCrawler
 				}
 			}
 		}
-		
+
 		return lines.toArray(new String [] {});
 	}
 }
