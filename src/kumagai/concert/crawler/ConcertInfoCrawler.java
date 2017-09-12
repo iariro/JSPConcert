@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -30,32 +31,49 @@ public class ConcertInfoCrawler
 		String[] htmlLines = ConcertInfoServer.getHtmlLines("pastorchestra.htm");
 		ArrayList<PastConcertInfo> urlAndNames = ConcertInfoServer.getUrls(htmlLines);
 		PrintWriter fileWriter = new PrintWriter("NewConcert.txt");
-		for (PastConcertInfo urlAndName : urlAndNames)
+		for (int i=0 ; i<urlAndNames.size() ; i++)
 		{
-			System.out.println(urlAndName);
+			PastConcertInfo urlAndName = urlAndNames.get(i);
 
-			boolean find = false;
-			for (String encode : encodes)
+			System.out.printf("(%d/%d) %s\n", i+1, urlAndNames.size(), urlAndName);
+
+			try
 			{
-				try
+				fileWriter.println("-----------------------------------------------");
+
+				if (urlAndName.url.indexOf("facebook.com") >= 0)
+				{
+					fileWriter.printf("%s facebook\n", urlAndName.orchestra);
+					continue;
+				}
+
+				boolean find = false;
+				for (String encode : encodes)
 				{
 					URL url = new URL(urlAndName.url);
+
+					URLConnection connection = url.openConnection();
+					connection.setRequestProperty("User-agent", "ConcertCrawler");
+					connection.setReadTimeout(10000);
 
 					InputStream inputStream = url.openStream();
 					BufferedReader reader =
 						new BufferedReader(new InputStreamReader(inputStream, encode));
 
-					fileWriter.println("-----------------------------------------------");
-					fileWriter.println(urlAndName.orchestra);
+					int lineCount = 30;
+					if (urlAndName.url.indexOf("okesen") >= 0)
+					{
+						lineCount = 50;
+					}
 
-					String[] concertInfo = getConcertInfo(reader);
+					String[] concertInfo = getConcertInfo(reader, lineCount);
 					if (concertInfo != null)
 					{
 						// 情報あり
 
 						for (String line : concertInfo)
 						{
-							if (line.length() > 100)
+							if (line.length() > 200)
 							{
 								// 長すぎる行＝スクリプト対策
 
@@ -65,22 +83,28 @@ public class ConcertInfoCrawler
 							fileWriter.println(line);
 						}
 
+						fileWriter.printf("%s %s\n", urlAndName.orchestra, encode);
 						find = true;
 					}
 
 					inputStream.close();
-				}
-				catch (IOException exception)
-				{
-					fileWriter.println(exception.getMessage());
+
+					if (find)
+					{
+						// 情報を見つけた＝このエンコードで当たり
+
+						break;
+					}
 				}
 
-				if (find)
+				if (!find)
 				{
-					// 情報を見つけた＝このエンコードで当たり
-
-					break;
+					fileWriter.printf("%s none\n", urlAndName.orchestra);
 				}
+			}
+			catch (IOException exception)
+			{
+				fileWriter.printf("%s %s\n", urlAndName.orchestra, exception.getMessage());
 			}
 		}
 		fileWriter.close();
@@ -91,7 +115,7 @@ public class ConcertInfoCrawler
 	 * @param reader HTML読み込みオブジェクト
 	 * @return コンサート情報
 	 */
-	static public String [] getConcertInfo(BufferedReader reader)
+	static public String [] getConcertInfo(BufferedReader reader, int lineCount)
 		throws IOException
 	{
 		int count = 0;
@@ -102,7 +126,10 @@ public class ConcertInfoCrawler
 		{
 			line = line.replaceAll("<.+?>", "");
 			line = line.trim();
-			if (line.length() <= 0)
+			if (line.length() <= 1 ||
+				line.equals("-->") ||
+				line.equals("&nbsp;") ||
+				line.equals("// <![CDATA["))
 			{
 				// 空行
 
@@ -114,7 +141,7 @@ public class ConcertInfoCrawler
 				// 演奏会情報の前or演奏会情報の範囲内
 
 				lines.add(line);
-				if (lines.size() > 30)
+				if (lines.size() > 40)
 				{
 					// 最大サイズを超えている
 
@@ -132,12 +159,18 @@ public class ConcertInfoCrawler
 			{
 				// 演奏会情報の前
 
-				if (line.indexOf("演奏会") >= 0)
+				if (line.indexOf("演奏会") >= 0 ||
+					line.indexOf("公演概要") >= 0)
 				{
 					// 演奏会の文字を含む
 
-					find = true;
-					count = 20;
+					if (line.indexOf("演奏会記録") < 0)
+					{
+						// 演奏会記録ではない
+
+						find = true;
+						count = lineCount;
+					}
 				}
 			}
 		}

@@ -28,4 +28,10 @@ public class ConcertInfoServerTest
 			System.out.println(url);
 		}
 	}
+
+	public void test2()
+	{
+		String line = "<h1 class=\"\" id=\"cc-m-header-10881515489\">演奏会情報</h1>";
+		System.out.println(line.replace("<.+?>", ""));
+	}
 }

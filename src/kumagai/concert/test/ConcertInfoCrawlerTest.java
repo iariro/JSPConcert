@@ -55,7 +55,7 @@ public class ConcertInfoCrawlerTest
 		byte [] bytes = html.getBytes();
 		ByteInputStream stream = new ByteInputStream(bytes, 0, bytes.length);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		String [] lines = ConcertInfoCrawler.getConcertInfo(reader);
+		String [] lines = ConcertInfoCrawler.getConcertInfo(reader, 20);
 		for (String line : lines)
 		{
 			System.out.println(line);
