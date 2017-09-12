@@ -16,6 +16,10 @@ public class ConcertInfoCrawler
 {
 	static private final String [] encodes = { "UTF-8", "Shift_JIS", "EUC-JP" };
 
+	/**
+	 * コンサート情報収集処理
+	 * @param args 未使用
+	 */
 	static public void main(String[] args)
 		throws IOException
 	{
@@ -30,17 +34,20 @@ public class ConcertInfoCrawler
 		{
 			System.out.println(urlAndName);
 
+			boolean find = false;
 			for (String encode : encodes)
 			{
 				try
 				{
 					URL url = new URL(urlAndName.url);
 
-					InputStream in = url.openStream();
-					BufferedReader reader = new BufferedReader(new InputStreamReader(in, encode));
+					InputStream inputStream = url.openStream();
+					BufferedReader reader =
+						new BufferedReader(new InputStreamReader(inputStream, encode));
 
-					fileWriter.println(urlAndName.orchestra);
 					fileWriter.println("-----------------------------------------------");
+					fileWriter.println(urlAndName.orchestra);
+
 					String[] concertInfo = getConcertInfo(reader);
 					if (concertInfo != null)
 					{
@@ -50,20 +57,29 @@ public class ConcertInfoCrawler
 						{
 							if (line.length() > 100)
 							{
+								// 長すぎる行＝スクリプト対策
+
 								line = line.substring(0, 100);
 							}
 
 							fileWriter.println(line);
 						}
 
-						break;
+						find = true;
 					}
 
-					in.close();
+					inputStream.close();
 				}
 				catch (IOException exception)
 				{
 					fileWriter.println(exception.getMessage());
+				}
+
+				if (find)
+				{
+					// 情報を見つけた＝このエンコードで当たり
+
+					break;
 				}
 			}
 		}
