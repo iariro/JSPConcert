@@ -9,12 +9,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
+import ktool.datetime.DateTime;
+
 /**
  * コンサート情報収集処理
  * @author kumagai
  */
 public class ConcertInfoCrawler
 {
+	static private final String separateLine = "-----------------------------------------------";
 	static private final String [] encodes = { "UTF-8", "Shift_JIS", "EUC-JP" };
 
 	/**
@@ -30,7 +33,12 @@ public class ConcertInfoCrawler
 
 		String[] htmlLines = ConcertInfoServer.getHtmlLines("pastorchestra.htm");
 		ArrayList<PastConcertInfo> urlAndNames = ConcertInfoServer.getUrls(htmlLines);
-		PrintWriter fileWriter = new PrintWriter("NewConcert.txt");
+
+		PrintWriter fileNew = new PrintWriter("Concert_new.txt");
+		PrintWriter fileOld = new PrintWriter("Concert_old.txt");
+		PrintWriter fileError = new PrintWriter("Concert_error.txt");
+
+		DateTime start = new DateTime();
 		for (int i=0 ; i<urlAndNames.size() ; i++)
 		{
 			PastConcertInfo urlAndName = urlAndNames.get(i);
@@ -39,11 +47,12 @@ public class ConcertInfoCrawler
 
 			try
 			{
-				fileWriter.println("-----------------------------------------------");
-
 				if (urlAndName.url.indexOf("facebook.com") >= 0)
 				{
-					fileWriter.printf("%s facebook\n", urlAndName.orchestra);
+					// facebookは対象外とする
+
+					fileError.println(separateLine);
+					fileError.printf("%s facebook\n", urlAndName.orchestra);
 					continue;
 				}
 
@@ -53,7 +62,10 @@ public class ConcertInfoCrawler
 					URL url = new URL(urlAndName.url);
 
 					URLConnection connection = url.openConnection();
+					// httpsエラー対策
 					connection.setRequestProperty("User-agent", "ConcertCrawler");
+					// タイムアウト設定
+					connection.setConnectTimeout(10000);
 					connection.setReadTimeout(10000);
 
 					InputStream inputStream = url.openStream();
@@ -63,6 +75,8 @@ public class ConcertInfoCrawler
 					int lineCount = 30;
 					if (urlAndName.url.indexOf("okesen") >= 0)
 					{
+						// オケ専の場合はたくさん読むように
+
 						lineCount = 50;
 					}
 
@@ -71,6 +85,22 @@ public class ConcertInfoCrawler
 					{
 						// 情報あり
 
+						PrintWriter file;
+						String date = ConcertInfoCrawler.extractDate(concertInfo);
+						if (date.compareTo(urlAndName.date) <= 0)
+						{
+							// 既知の情報と同じor古い情報
+
+							file = fileOld;
+						}
+						else
+						{
+							// 新しい情報
+
+							file = fileNew;
+						}
+
+						file.println(separateLine);
 						for (String line : concertInfo)
 						{
 							if (line.length() > 200)
@@ -80,10 +110,10 @@ public class ConcertInfoCrawler
 								line = line.substring(0, 100);
 							}
 
-							fileWriter.println(line);
+							file.println(line);
 						}
 
-						fileWriter.printf("%s %s\n", urlAndName.orchestra, encode);
+						file.printf("%s %s\n", urlAndName.orchestra, encode);
 						find = true;
 					}
 
@@ -99,15 +129,27 @@ public class ConcertInfoCrawler
 
 				if (!find)
 				{
-					fileWriter.printf("%s none\n", urlAndName.orchestra);
+					// 見つからなかった
+
+					fileError.println(separateLine);
+					fileError.printf("%s none\n", urlAndName.orchestra);
 				}
 			}
 			catch (IOException exception)
 			{
-				fileWriter.printf("%s %s\n", urlAndName.orchestra, exception.getMessage());
+				// URLなし・サーバエラー
+
+				fileError.println(separateLine);
+				fileError.printf("%s %s\n", urlAndName.orchestra, exception.getMessage());
 			}
 		}
-		fileWriter.close();
+
+		fileOld.close();
+		fileNew.close();
+		fileError.close();
+
+		DateTime end = new DateTime();
+		System.out.printf("%s -> %s = %s\n", start, end, end.diff(start));
 	}
 
 	/**
