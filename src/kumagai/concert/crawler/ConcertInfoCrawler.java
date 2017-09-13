@@ -34,9 +34,9 @@ public class ConcertInfoCrawler
 		String[] htmlLines = ConcertInfoServer.getHtmlLines("pastorchestra.htm");
 		ArrayList<PastConcertInfo> urlAndNames = ConcertInfoServer.getUrls(htmlLines);
 
-		PrintWriter fileNew = new PrintWriter("Concert_new.txt");
-		PrintWriter fileOld = new PrintWriter("Concert_old.txt");
-		PrintWriter fileError = new PrintWriter("Concert_error.txt");
+		PrintWriter fileNew = new PrintWriter("../Concert_new.txt");
+		PrintWriter fileOld = new PrintWriter("../Concert_old.txt");
+		PrintWriter fileError = new PrintWriter("../Concert_error.txt");
 
 		DateTime start = new DateTime();
 		for (int i=0 ; i<urlAndNames.size() ; i++)
@@ -87,9 +87,9 @@ public class ConcertInfoCrawler
 
 						PrintWriter file;
 						String date = ConcertInfoCrawler.extractDate(concertInfo);
-						if (date.compareTo(urlAndName.date) <= 0)
+						if (date == null || date.compareTo(urlAndName.date) <= 0)
 						{
-							// 既知の情報と同じor古い情報
+							// 日付なしor既知の情報と同じor古い情報
 
 							file = fileOld;
 						}
@@ -219,7 +219,7 @@ public class ConcertInfoCrawler
 
 		return find ? lines.toArray(new String [] {}) : null;
 	}
-	
+
 	/**
 	 * コンサート情報から日付を抽出する
 	 * 複数ある場合は新しい日付を優先する
