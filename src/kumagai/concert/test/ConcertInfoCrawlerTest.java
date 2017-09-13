@@ -1,16 +1,19 @@
 package kumagai.concert.test;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
-
+import junit.framework.TestCase;
 import kumagai.concert.crawler.ConcertInfoCrawler;
 
 public class ConcertInfoCrawlerTest
+	extends TestCase
 {
-	public static void main(String[] args)
+	public void testGetConcertInfo(String[] args)
 		throws IOException
 	{
 		String html =
@@ -53,13 +56,43 @@ public class ConcertInfoCrawlerTest
 			"<a>戻る</a>";
 
 		byte [] bytes = html.getBytes();
-		ByteInputStream stream = new ByteInputStream(bytes, 0, bytes.length);
+		ByteArrayInputStream stream = new ByteArrayInputStream(bytes, 0, bytes.length);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		String [] lines = ConcertInfoCrawler.getConcertInfo(reader, 20);
 		for (String line : lines)
 		{
 			System.out.println(line);
 		}
+		stream.close();
+	}
+	
+	public void testGetDate()
+		throws IOException
+	{
+		FileInputStream stream = new FileInputStream("../NewConcert.txt");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+
+		ArrayList<String> lines = null;
+		String line;
+		while ((line = reader.readLine()) != null)
+		{
+			if (line.equals("-----------------------------------------------"))
+			{
+				if (lines != null)
+				{
+					String [] lines2 = lines.toArray(new String [] {});
+					String date = ConcertInfoCrawler.extractDate(lines2);
+					System.out.printf("\t-> %s\n", date);
+				}
+				lines = new ArrayList<String>();
+			}
+			else
+			{
+				lines.add(line);
+			}
+			System.out.println(line);
+		}
+
 		stream.close();
 	}
 }

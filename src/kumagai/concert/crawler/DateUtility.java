@@ -9,8 +9,14 @@ import java.util.regex.Pattern;
  */
 public class DateUtility
 {
-	static private final Pattern pattermSeireki = Pattern.compile("([0-9]{4})[/／年]([0-9]{1,2})[/／月]([0-9]{1,2})[／日]*");
-	static private final Pattern pattermWareki = Pattern.compile("平成([0-9]*)[/／年]([0-9]{1,2})[/／月]([0-9]{1,2})[／日]*");
+	static public final Pattern pattermSeirekiHalf =
+		Pattern.compile(".*([0-9]{4})[/／年] *([0-9]{1,2})[/／月] *([0-9]{1,2})[／日]*.*");
+	static public final Pattern pattermSeirekiFull =
+			Pattern.compile(".*([０-９]{4})[/／年] *([０-９]{1,2})[/／月] *([０-９]{1,2})[／日]*.*");
+	static public final Pattern pattermWarekiHalf =
+		Pattern.compile(".*平成([0-9]*)[/／年] *([0-9]{1,2})[/／月] *([0-9]{1,2})[／日]*.*");
+	static public final Pattern pattermWarekiFull =
+		Pattern.compile(".*平成([０-９]*)[/／年] *([０-９]{1,2})[/／月] *([０-９]{1,2})[／日]*.*");
 
 	/**
 	 * 日付文字列の整形
@@ -21,16 +27,21 @@ public class DateUtility
 	{
 		date = changeNumFullToHalf(date);
 
-		Matcher matcher = pattermSeireki.matcher(date);
-		if (matcher.matches())
-		{
-			return changeNumFullToHalf(String.format("%s/%s/%s", matcher.group(1), matcher.group(2), matcher.group(3)));
-		}
-		matcher = pattermWareki.matcher(date);
+		Matcher matcher = pattermSeirekiHalf.matcher(date);
 		if (matcher.matches())
 		{
 			int year = Integer.valueOf(matcher.group(1));
-			return changeNumFullToHalf(String.format("%s/%s/%s", year + 1988, matcher.group(2), matcher.group(3)));
+			int month = Integer.valueOf(matcher.group(2));
+			int day = Integer.valueOf(matcher.group(3));
+			return changeNumFullToHalf(String.format("%04d/%02d/%02d", year, month, day));
+		}
+		matcher = pattermWarekiHalf.matcher(date);
+		if (matcher.matches())
+		{
+			int year = Integer.valueOf(matcher.group(1));
+			int month = Integer.valueOf(matcher.group(2));
+			int day = Integer.valueOf(matcher.group(3));
+			return changeNumFullToHalf(String.format("%04d/%02d/%02d", year + 1988, month, day));
 		}
 		return null;
 	}
@@ -40,7 +51,7 @@ public class DateUtility
 	 * @param str 変換元文字列
 	 * @return 変換済み文字列
 	 */
-	public static String changeNumFullToHalf(String str)
+	static public String changeNumFullToHalf(String str)
 	{
 		String result = null;
 		if (str != null)

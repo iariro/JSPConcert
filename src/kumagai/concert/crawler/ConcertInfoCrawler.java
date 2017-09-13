@@ -177,4 +177,41 @@ public class ConcertInfoCrawler
 
 		return find ? lines.toArray(new String [] {}) : null;
 	}
+	
+	/**
+	 * コンサート情報から日付を抽出する
+	 * 複数ある場合は新しい日付を優先する
+	 * @param lines コンサート情報文字列
+	 * @return 日付
+	 */
+	static public String extractDate(String [] lines)
+	{
+		String lastDate = null;
+
+		for (String line : lines)
+		{
+			if (DateUtility.pattermSeirekiHalf.matcher(line).find() ||
+				DateUtility.pattermSeirekiFull.matcher(line).find() ||
+				DateUtility.pattermWarekiHalf.matcher(line).find() ||
+				DateUtility.pattermWarekiFull.matcher(line).find())
+			{
+				// 日付を含む行
+
+				String date = DateUtility.trimDate(line);
+
+				if (date != null)
+				{
+					// 日付を取り出し
+
+					if (lastDate == null || lastDate.compareTo(date) < 0)
+					{
+						// 新規または新しい日付あり
+
+						lastDate = date;
+					}
+				}
+			}
+		}
+		return lastDate;
+	}
 }
