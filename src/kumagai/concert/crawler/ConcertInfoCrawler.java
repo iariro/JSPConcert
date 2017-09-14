@@ -113,7 +113,7 @@ public class ConcertInfoCrawler
 							file.println(line);
 						}
 
-						file.printf("%s %s\n", urlAndName.orchestra, encode);
+						file.printf("%s\ndb=%s:now=%s %s\n", urlAndName.orchestra, urlAndName.date, date, encode);
 						find = true;
 					}
 
