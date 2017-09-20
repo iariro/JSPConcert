@@ -211,7 +211,7 @@ public class SearchNoRefAction
 
 		// 09 重複したコンサート
 		result = statement.executeQuery(
-			"select hallId, hall.name as hallName, date, kaien from concert join hall on hall.id=concert.hallid group by hallId, hall.name, date, kaien having count(*) >= 2 order by date");
+			"select hallId, hall.name as hallName, date from concert join hall on hall.id=concert.hallid group by hallId, hall.name, date having count(*) >= 2 order by date");
 
 		duplicateConcert = new ArrayList<Concert4>();
 
