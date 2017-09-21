@@ -56,17 +56,17 @@ public class DateUtility
 		String result = null;
 		if (str != null)
 		{
-		    StringBuilder sb = new StringBuilder(str);
-		    for (int i = 0; i < sb.length(); i++)
-		    {
-		        int c = (int)sb.charAt(i);
-		        if (c >= '０' && c <= '９')
-		        {
-		            sb.setCharAt(i, (char)(c - '０' + '0'));
-		        }
-		    }
-		    result = sb.toString();
+			StringBuilder sb = new StringBuilder(str);
+			for (int i = 0; i < sb.length(); i++)
+			{
+				int c = (int)sb.charAt(i);
+				if (c >= '０' && c <= '９')
+				{
+					sb.setCharAt(i, (char)(c - '０' + '0'));
+				}
+			}
+			result = sb.toString();
 		}
-	    return result;
+		return result;
 	}
 }

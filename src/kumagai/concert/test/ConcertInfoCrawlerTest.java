@@ -65,7 +65,7 @@ public class ConcertInfoCrawlerTest
 		}
 		stream.close();
 	}
-	
+
 	public void testGetDate()
 		throws IOException
 	{

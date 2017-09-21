@@ -22,7 +22,7 @@ public class PastConcertInfo
 		this.url = url;
 		this.date = date;
 	}
-	
+
 	@Override
 	public String toString()
 	{
