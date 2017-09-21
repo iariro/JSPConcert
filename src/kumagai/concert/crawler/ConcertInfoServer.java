@@ -72,15 +72,14 @@ public class ConcertInfoServer
 
 	/**
 	 * HTML読み込み。
-	 * @param filename ファイル名 
-	 * @throws IOException 
+	 * @param filename ファイル名
 	 */
 	static public String [] getHtmlLines(String filename) throws IOException
 	{
 		URL url = new URL(String.format(urlBase, filename));
 
 		InputStream in = url.openStream();
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		BufferedReader br = new BufferedReader(new InputStreamReader(in, "utf-8"));
 
 		ArrayList<String> lines = new ArrayList<String>();
 		String line;
@@ -90,7 +89,7 @@ public class ConcertInfoServer
 		}
 
 		in.close();
-		
+
 		return lines.toArray(new String [] {});
 	}
 }
