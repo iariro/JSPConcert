@@ -10,6 +10,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 import ktool.datetime.DateTime;
+import ktool.datetime.TimeSpan;
 
 /**
  * コンサート情報収集処理
@@ -38,12 +39,16 @@ public class ConcertInfoCrawler
 		PrintWriter fileOld = new PrintWriter("../Concert_old.txt");
 		PrintWriter fileError = new PrintWriter("../Concert_error.txt");
 
+		String maxspanOrchestra = null;
 		DateTime start = new DateTime();
+		TimeSpan maxspan = null;
 		for (int i=0 ; i<urlAndNames.size() ; i++)
 		{
+			DateTime split1 = new DateTime();
+
 			PastConcertInfo urlAndName = urlAndNames.get(i);
 
-			System.out.printf("(%d/%d) %s\n", i+1, urlAndNames.size(), urlAndName);
+			System.out.printf("(%d/%d) %s\n", i+1, urlAndNames.size(), urlAndName.orchestra);
 
 			try
 			{
@@ -142,6 +147,15 @@ public class ConcertInfoCrawler
 				fileError.println(separateLine);
 				fileError.printf("%s %s\n", urlAndName.orchestra, exception.getMessage());
 			}
+			DateTime split2 = new DateTime();
+			TimeSpan span = split2.diff(split1);
+			if (maxspan == null || span.compare(maxspan) > 0)
+			{
+				// 最大値更新
+
+				maxspan = span;
+				maxspanOrchestra = urlAndName.orchestra;
+			}
 		}
 
 		fileOld.close();
@@ -149,7 +163,8 @@ public class ConcertInfoCrawler
 		fileError.close();
 
 		DateTime end = new DateTime();
-		System.out.printf("%s -> %s = %s\n", start, end, end.diff(start));
+		System.out.printf("%s -> %s = %s\n", start.toFullString(), end.toFullString(), end.diff(start));
+		System.out.printf("%s %s\n", maxspanOrchestra, maxspan);
 	}
 
 	/**
