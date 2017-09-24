@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
@@ -20,6 +22,34 @@ public class ConcertInfoCrawler
 {
 	static private final String separateLine = "-----------------------------------------------";
 	static private final String [] encodes = { "UTF-8", "Shift_JIS", "EUC-JP" };
+	static private final String [] skipLines =
+		{
+			"演奏会の情報を追加しました",
+			"^<!--$",
+			"^-->$",
+			"^//[A-z ->]*$",
+			"^&nbsp;$",
+			"\"[A-z]*\" : \"[A-z0-9#]*\".*",
+			"^// <!\\[CDATA\\[$",
+			"^function *[A-z0-9]*.*$",
+			"^if *\\(.*\\).*",
+			"^onMouse[DUO]",
+			"^var [A-z]*.*",
+			"^window\\.[A-z]*.*",
+			"^<img [A-z]*.*",
+			"^<A HREF.*",
+			"^<a href.*"
+		};
+	static private final Pattern [] patternSkipLines;
+
+	static
+	{
+		patternSkipLines = new Pattern[skipLines.length];
+		for (int i=0 ; i<skipLines.length ; i++)
+		{
+			patternSkipLines[i] = Pattern.compile(skipLines[i]);
+		}
+	}
 
 	/**
 	 * コンサート情報収集処理
@@ -57,7 +87,7 @@ public class ConcertInfoCrawler
 					// facebookは対象外とする
 
 					fileError.println(separateLine);
-					fileError.printf("%s facebook\n", urlAndName.orchestra);
+					fileError.printf("%s\ndb=%s facebook\n", urlAndName.orchestra, urlAndName.date);
 					continue;
 				}
 
@@ -92,9 +122,15 @@ public class ConcertInfoCrawler
 
 						PrintWriter file;
 						String date = ConcertInfoCrawler.extractDate(concertInfo);
-						if (date == null || date.compareTo(urlAndName.date) <= 0)
+						if (date == null)
 						{
-							// 日付なしor既知の情報と同じor古い情報
+							// 日付なし
+
+							file = fileError;
+						}
+						else if (date.compareTo(urlAndName.date) <= 0)
+						{
+							// 既知の情報と同じor古い情報
 
 							file = fileOld;
 						}
@@ -137,7 +173,7 @@ public class ConcertInfoCrawler
 					// 見つからなかった
 
 					fileError.println(separateLine);
-					fileError.printf("%s none\n", urlAndName.orchestra);
+					fileError.printf("%s\ndb=%s:now=none\n", urlAndName.orchestra, urlAndName.date);
 				}
 			}
 			catch (IOException exception)
@@ -183,13 +219,26 @@ public class ConcertInfoCrawler
 		{
 			line = line.replaceAll("<.+?>", "");
 			line = line.trim();
-			if (line.length() <= 1 ||
-				line.equals("-->") ||
-				line.equals("&nbsp;") ||
-				line.equals("// <![CDATA["))
+			if (line.length() <= 1)
 			{
 				// 空行
 
+				continue;
+			}
+
+			boolean skip = false;
+			for (Pattern patternSkipLine : patternSkipLines)
+			{
+				Matcher matcher = patternSkipLine.matcher(line);
+				if (matcher.matches())
+				{
+					skip = true;
+					break;
+				}
+			}
+
+			if (skip)
+			{
 				continue;
 			}
 
@@ -247,10 +296,10 @@ public class ConcertInfoCrawler
 
 		for (String line : lines)
 		{
-			if (DateUtility.pattermSeirekiHalf.matcher(line).find() ||
-				DateUtility.pattermSeirekiFull.matcher(line).find() ||
-				DateUtility.pattermWarekiHalf.matcher(line).find() ||
-				DateUtility.pattermWarekiFull.matcher(line).find())
+			if (DateUtility.patternSeirekiHalf.matcher(line).find() ||
+				DateUtility.patternSeirekiFull.matcher(line).find() ||
+				DateUtility.patternWarekiHalf.matcher(line).find() ||
+				DateUtility.patternWarekiFull.matcher(line).find())
 			{
 				// 日付を含む行
 
