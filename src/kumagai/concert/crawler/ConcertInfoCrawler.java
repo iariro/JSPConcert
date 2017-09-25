@@ -24,7 +24,7 @@ public class ConcertInfoCrawler
 	static private final String [] encodes = { "UTF-8", "Shift_JIS", "EUC-JP" };
 	static private final String [] skipLines =
 		{
-			"演奏会の情報を追加しました",
+			".*演奏会の情報を追加しました",
 			"^<!--$",
 			"^-->$",
 			"^//[A-z ->]*$",
@@ -33,7 +33,7 @@ public class ConcertInfoCrawler
 			"^// <!\\[CDATA\\[$",
 			"^function *[A-z0-9]*.*$",
 			"^if *\\(.*\\).*",
-			"^onMouse[DUO]",
+			"^onMouse[DUO].*",
 			"^var [A-z]*.*",
 			"^window\\.[A-z]*.*",
 			"^<img [A-z]*.*",
