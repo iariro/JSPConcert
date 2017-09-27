@@ -13,6 +13,7 @@
 		<h1>今後のコンサート情報がない楽団</h1>
 		<div class=hatena-body>
 		<div class=main>
+		<s:property value="today" /><br>
 
 		<div class=day>
 

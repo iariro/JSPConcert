@@ -1,12 +1,23 @@
 package kumagai.concert.struts2;
 
-import java.sql.*;
-import java.util.*;
-import javax.servlet.*;
-import com.microsoft.sqlserver.jdbc.*;
-import org.apache.struts2.*;
-import org.apache.struts2.convention.annotation.*;
-import kumagai.concert.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletContext;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Result;
+
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+
+import ktool.datetime.DateTime;
+import kumagai.concert.PastOrchestraList1;
+import kumagai.concert.PastOrchestraList2;
+import kumagai.concert.StringAndStringAndDate;
 
 /**
  * コンサートが終了したオーケストラのリスト表示アクション。
@@ -19,6 +30,7 @@ public class PastOrchestraAction
 	public ArrayList<StringAndStringAndDate> pastOrchestraList1;
 	public ArrayList<StringAndStringAndDate> pastOrchestraList2;
 	public ArrayList<StringAndStringAndDate> pastOrchestraList3;
+	public String today;
 
 	/**
 	 * リスト１のサイズを取得。
@@ -72,6 +84,9 @@ public class PastOrchestraAction
 
 		statement.close();
 		connection.close();
+
+		DateTime today = new DateTime();
+		this.today = today.toFullString();
 
 		return "success";
 	}
