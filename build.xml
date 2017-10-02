@@ -96,7 +96,9 @@
 	</target>
 
 	<target name="crawl">
-		<java classname="kumagai.concert.crawler.ConcertInfoCrawler" classpath="bin;${KTOOL_LIB}" />
+		<java classname="kumagai.concert.crawler.ConcertInfoCrawler" classpath="bin;${KTOOL_LIB}">
+			<arg value="db"/>
+		</java>
 	</target>
 
 </project>

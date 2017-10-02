@@ -1,14 +1,20 @@
 package kumagai.concert;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import ktool.datetime.DateTime;
+import kumagai.concert.crawler.PastConcertInfo;
 
 /**
  * 演奏会がすべて終わったオーケストラのリスト情報。
  * @author kumagai
  */
 public class PastOrchestraList2
-	extends ArrayList<StringAndStringAndDate>
+	extends ArrayList<PastConcertInfo>
 {
 	/**
 	 * DB取得値からオブジェクトを構築する。
@@ -30,10 +36,10 @@ public class PastOrchestraList2
 		while (result.next())
 		{
 			add(
-				new StringAndStringAndDate(
+				new PastConcertInfo(
 					result.getString("name"),
 					result.getString("siteurl").length() > 0 ? result.getString("siteurl") : null,
-					result.getDate("date")));
+					new DateTime(result.getDate("date")).toFullString()));
 		}
 
 		result.close();

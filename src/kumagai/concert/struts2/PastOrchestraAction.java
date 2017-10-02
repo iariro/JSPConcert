@@ -17,7 +17,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import ktool.datetime.DateTime;
 import kumagai.concert.PastOrchestraList1;
 import kumagai.concert.PastOrchestraList2;
-import kumagai.concert.StringAndStringAndDate;
+import kumagai.concert.crawler.PastConcertInfo;
 
 /**
  * コンサートが終了したオーケストラのリスト表示アクション。
@@ -27,9 +27,9 @@ import kumagai.concert.StringAndStringAndDate;
 @Result(name="success", location="/concert/pastorchestra.jsp")
 public class PastOrchestraAction
 {
-	public ArrayList<StringAndStringAndDate> pastOrchestraList1;
-	public ArrayList<StringAndStringAndDate> pastOrchestraList2;
-	public ArrayList<StringAndStringAndDate> pastOrchestraList3;
+	public ArrayList<PastConcertInfo> pastOrchestraList1;
+	public ArrayList<PastConcertInfo> pastOrchestraList2;
+	public ArrayList<PastConcertInfo> pastOrchestraList3;
 	public String today;
 
 	/**

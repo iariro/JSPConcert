@@ -7,12 +7,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
+import kumagai.concert.PastOrchestraList2;
 
 /**
  * コンサート情報収集処理
@@ -53,21 +59,56 @@ public class ConcertInfoCrawler
 
 	/**
 	 * コンサート情報収集処理
-	 * @param args 未使用
+	 * @param args db|net
+	 * @throws SQLException 
 	 */
 	static public void main(String[] args)
-		throws IOException
+		throws IOException, SQLException
 	{
-		System.setProperty("proxySet", "true");
-		System.setProperty("proxyHost", "proxy-cb");
-		System.setProperty("proxyPort", "8080");
+		String source = null;
+		if (args.length < 1)
+		{
+			// no arg
 
-		String[] htmlLines = ConcertInfoServer.getHtmlLines("pastorchestra.htm");
-		ArrayList<PastConcertInfo> urlAndNames = ConcertInfoServer.getUrls(htmlLines);
+			System.out.println("Usage: db|net");
+			return;
+		}
+		source = args[0];
 
-		PrintWriter fileNew = new PrintWriter("../Concert_new.txt");
-		PrintWriter fileOld = new PrintWriter("../Concert_old.txt");
-		PrintWriter fileError = new PrintWriter("../Concert_error.txt");
+		ArrayList<PastConcertInfo> urlAndNames;
+		if (source.equals("net"))
+		{
+			// net
+
+			System.setProperty("proxySet", "true");
+			System.setProperty("proxyHost", "proxy-cb");
+			System.setProperty("proxyPort", "8080");
+
+			String[] htmlLines = ConcertInfoServer.getHtmlLines("pastorchestra.htm");
+			urlAndNames = ConcertInfoServer.getUrls(htmlLines);
+		}
+		else if (source.equals("db"))
+		{
+			// DB
+
+			DriverManager.registerDriver(new SQLServerDriver());
+			Connection dbconnection =
+				DriverManager.getConnection
+					("jdbc:sqlserver://localhost:2144;DatabaseName=Concert;User=sa;Password=p@ssw0rd;");
+			urlAndNames = new PastOrchestraList2(dbconnection, true);
+			dbconnection.close();
+		}
+		else
+		{
+			// else
+
+			System.out.println("Usage: db|net");
+			return;
+		}
+
+		PrintWriter fileNew = new PrintWriter("Concert_new.txt");
+		PrintWriter fileOld = new PrintWriter("Concert_old.txt");
+		PrintWriter fileError = new PrintWriter("Concert_error.txt");
 
 		String maxspanOrchestra = null;
 		DateTime start = new DateTime();
