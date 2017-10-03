@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import kumagai.concert.PastConcertInfo;
+
 /**
  * コンサート情報Webページ
  */

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import ktool.datetime.DateTime;
-import kumagai.concert.crawler.PastConcertInfo;
+import kumagai.concert.PastConcertInfo;
 
 /**
  * 演奏会がすべて終わったオーケストラのリスト情報。

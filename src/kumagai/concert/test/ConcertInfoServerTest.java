@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 import kumagai.concert.crawler.ConcertInfoServer;
-import kumagai.concert.crawler.PastConcertInfo;
+import kumagai.concert.PastConcertInfo;
 
 public class ConcertInfoServerTest
 	extends TestCase

@@ -18,6 +18,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
+import kumagai.concert.PastConcertInfo;
 import kumagai.concert.PastOrchestraList2;
 
 /**
@@ -60,7 +61,7 @@ public class ConcertInfoCrawler
 	/**
 	 * コンサート情報収集処理
 	 * @param args db|net
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	static public void main(String[] args)
 		throws IOException, SQLException

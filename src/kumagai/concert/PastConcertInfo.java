@@ -1,4 +1,4 @@
-package kumagai.concert.crawler;
+package kumagai.concert;
 
 /**
  * コンサート終了オーケストラ情報

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import kumagai.concert.crawler.PastConcertInfo;
+import kumagai.concert.PastConcertInfo;
 
 /**
  * 出演が何もないオーケストラのリスト情報。

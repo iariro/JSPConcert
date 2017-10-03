@@ -23,11 +23,11 @@
 				<s:iterator value="pastOrchestraList1">
 				<tr>
 				<td>
-					<s:if test="%{string2.length()>0}">
-						<a href="<s:property value="string2" />">
+					<s:if test="%{url.length()>0}">
+						<a href="<s:property value="url" />">
 					</s:if>
-					<s:property value="string1" />
-					<s:if  test="%{string2.length()>0}">
+					<s:property value="orchestra" />
+					<s:if  test="%{url.length()>0}">
 						</a>
 					</s:if>
 				</td>
@@ -42,11 +42,11 @@
 				<s:iterator value="pastOrchestraList2">
 				<tr>
 				<td>
-					<s:if test="%{string2.length()>0}">
-						<a href="<s:property value="string2" />">
+					<s:if test="%{url.length()>0}">
+						<a href="<s:property value="url" />">
 					</s:if>
-					<s:property value="string1" />
-					<s:if  test="%{string2.length()>0}">
+					<s:property value="orchestra" />
+					<s:if  test="%{url.length()>0}">
 						</a>
 					</s:if>
 				</td>
@@ -61,11 +61,11 @@
 				<s:iterator value="pastOrchestraList3">
 				<tr>
 				<td>
-					<s:if test="%{string2.length()>0}">
-						<a href="<s:property value="string2" />">
+					<s:if test="%{url.length()>0}">
+						<a href="<s:property value="url" />">
 					</s:if>
-					<s:property value="string1" />
-					<s:if  test="%{string2.length()>0}">
+					<s:property value="orchestra" />
+					<s:if  test="%{url.length()>0}">
 						</a>
 					</s:if>
 				</td>

@@ -17,7 +17,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import ktool.datetime.DateTime;
 import kumagai.concert.PastOrchestraList1;
 import kumagai.concert.PastOrchestraList2;
-import kumagai.concert.crawler.PastConcertInfo;
+import kumagai.concert.PastConcertInfo;
 
 /**
  * コンサートが終了したオーケストラのリスト表示アクション。
