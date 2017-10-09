@@ -124,6 +124,14 @@ public class ConcertInfoCrawler
 
 			try
 			{
+				if (urlAndName.url == null)
+				{
+					// URLなし
+
+					fileError.printf("%s\ndb=%s no url\n", urlAndName.orchestra, urlAndName.date);
+					continue;
+				}
+
 				if (urlAndName.url.indexOf("facebook.com") >= 0)
 				{
 					// facebookは対象外とする
