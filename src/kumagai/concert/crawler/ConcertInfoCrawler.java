@@ -1,6 +1,7 @@
 package kumagai.concert.crawler;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,18 +61,18 @@ public class ConcertInfoCrawler
 
 	/**
 	 * コンサート情報収集処理
-	 * @param args db|net
+	 * @param args db|net outdir
 	 * @throws SQLException
 	 */
 	static public void main(String[] args)
 		throws IOException, SQLException
 	{
 		String source = null;
-		if (args.length < 1)
+		if (args.length < 2)
 		{
 			// no arg
 
-			System.out.println("Usage: db|net");
+			System.out.println("Usage: db|net outdir");
 			return;
 		}
 		source = args[0];
@@ -107,9 +108,9 @@ public class ConcertInfoCrawler
 			return;
 		}
 
-		PrintWriter fileNew = new PrintWriter("Concert_new.txt");
-		PrintWriter fileOld = new PrintWriter("Concert_old.txt");
-		PrintWriter fileError = new PrintWriter("Concert_error.txt");
+		PrintWriter fileNew = new PrintWriter(new File(args[1], "Concert_new.txt"));
+		PrintWriter fileOld = new PrintWriter(new File(args[1], "Concert_old.txt"));
+		PrintWriter fileError = new PrintWriter(new File(args[1], "Concert_error.txt"));
 
 		String maxspanOrchestra = null;
 		DateTime start = new DateTime();
