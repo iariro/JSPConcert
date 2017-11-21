@@ -1,4 +1,4 @@
-package kumagai.concert;
+package kumagai.concert.crawler;
 
 public class NewConcertDocument
 {
