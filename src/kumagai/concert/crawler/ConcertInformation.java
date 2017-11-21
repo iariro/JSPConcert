@@ -117,7 +117,7 @@ public class ConcertInformation
 	 * kyoku要素を作曲家属性のみで追加。
 	 * @param composer 作曲家名
 	 */
-	public void AddComposer(String composer)
+	public void addComposer(String composer)
 	{
 		composerNameAndTitles.add(new StringAndString(composer, null));
 	}
