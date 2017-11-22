@@ -1,6 +1,8 @@
 package kumagai.concert.crawler;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -10,10 +12,14 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import ktool.io.StringListFromFile;
 import ktool.xml.KDocument;
+import kumagai.concert.StringAndString;
 
 /**
  * コンサート情報XML
@@ -30,6 +36,29 @@ public class NewConcertDocument
 			new String [] { "サン＝サーンス", "サン=サーンス" }
 		};
 	static private final String empty = new String();
+
+	static public void main(String[] args)
+		throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException, SAXException, XPathExpressionException
+	{
+		ConcertSchemaDocument schemaDocument = new ConcertSchemaDocument("testdata/ConcertSchema.xsd");
+		String [] halls = schemaDocument.getHalls();
+		String [] playerNames = schemaDocument.getPlayerNames();
+		String [] partNames = schemaDocument.getPartNames();
+		String [] composers = schemaDocument.getComposerNames();
+		String [] lines = new StringListFromFile("testdata/concert.txt", "utf-8").toArray(new String[]{});
+		ConcertInformation concertInformation =
+			trimConcertInfo(0, lines, halls, composers, partNames, playerNames);
+		concertInformation.dump();
+		ArrayList<ConcertInformation> concertInformations = new ArrayList<ConcertInformation>();
+		concertInformations.add(concertInformation);
+
+		NewConcertDocument document = new NewConcertDocument(concertInformations);
+        TransformerFactory transFactory = TransformerFactory.newInstance();
+        Transformer transformer = transFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        document.write(transformer, new PrintWriter(System.out));
+	}
 
 	/**
 	 * テキストからコンサート情報を生成
@@ -102,40 +131,40 @@ public class NewConcertDocument
 							continue;
 						}
 
-						if (Pattern.matches("[0-9]{4}年[ 　]*[0-9]*月[ 　]*[0-9]*日", line))
+						if (Pattern.matches(".*[0-9]{4}年[ 　]*[0-9]*月[ 　]*[0-9]*日.*", line))
 						{
-							// 日付を含む。
+							// yyyy年mm月dd日
 
 							concert.date =
-								Pattern.compile(".*([0-9]{4})年[ 　]*([0-9]*)月[ 　]*([0-9]*)日.*").matcher(line).replaceAll("$1/$2/$3");
+								Pattern.compile("[^0-9]*([0-9]*)年[ 　]*([0-9]*)月[ 　]*([0-9]*)日.*").matcher(line).replaceAll("$1/$2/$3");
 							kakutei = true;
 						}
-						else if (Pattern.matches("[０-９]{4}年[０-９]*月[０-９]*日", line))
+						else if (Pattern.matches(".*[０-９]{4}年[０-９]*月[０-９]*日.*", line))
 						{
-							// 日付を含む。
+							// ｙｙｙｙ年ｍｍ月ｄｄ日
 
 							concert.date =
-								Pattern.compile(".*([０-９]{4})年([０-９]*)月([０-９]*)日.*").matcher(line).replaceAll("$1/$2/$3");
+								Pattern.compile("[^０-９]([０-９]{4})年([０-９]*)月([０-９]*)日.*").matcher(line).replaceAll("$1/$2/$3");
 							kakutei = true;
 						}
-						else if (Pattern.matches("[0-9]{2}[/.][0-9]*[/.][0-9]*", line))
+						else if (Pattern.matches("[^0-9]*[0-9]{2}[/.][0-9]*[/.][0-9]*.*", line))
 						{
-							// 日付を含む。
+							// yy/mm/dd or yy.mm.dd
 
 							concert.date =
 								Pattern.compile(".*([0-9]{2})[/.]([0-9]*)[/.]([0-9]*).*").matcher(line).replaceAll("20$1/$2/$3");
 							kakutei = true;
 						}
-						else if (Pattern.matches("[0-9]{4}/[0-9]*/[0-9]*", line))
+						else if (line.indexOf("http") < 0 && Pattern.matches(".*[0-9]{4}/[0-9]*/[0-9]*.*", line))
 						{
-							// 日付を含む。
+							// yyyy/mm/dd
 
 							concert.date =
-								Pattern.compile(".*([0-9]{4})/([0-9]*)/([0-9]*).*").matcher(line).replaceAll("$1/$2/$3");
+								Pattern.compile("[^0-9]*([0-9]{4})/([0-9]*)/([0-9]*).*").matcher(line).replaceAll("$1/$2/$3");
 							kakutei = true;
 						}
 
-						if (Pattern.matches("[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開場[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演", line))
+						if (Pattern.matches(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開場[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演.*", line))
 						{
 							// 「13:30開場 14:00開演」の形式の開場・開演時刻を含む。
 
@@ -143,7 +172,7 @@ public class NewConcertDocument
 							concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]) *開演.*").matcher(line).replaceAll("$1:$2");
 							kakutei = true;
 						}
-						else if (Pattern.matches("開場[ 　]*：* *[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９][ 　]*開演[ 　]*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９]", line))
+						else if (Pattern.matches(".*開場[ 　]*：* *[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９][ 　]*開演[ 　]*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９].*", line))
 						{
 							// 「開場13:30 開演14:00」の形式の開場・開演時刻を含む。
 
@@ -153,21 +182,21 @@ public class NewConcertDocument
 						}
 						else
 						{
-							if (Pattern.matches("[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９]開場", line))
+							if (Pattern.matches(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９]開場.*", line))
 							{
 								// 「13:30開場」の形式の開場時刻を含む。
 
 								concert.kaijou = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９])開場.*").matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(line, "[0-9０-９][0-9０-９]時[0-9０-９][0-9０-９]分開場"))
+							else if (Pattern.matches(".*[0-9０-９][0-9０-９]時[0-9０-９][0-9０-９]分開場.*", line))
 							{
 								// 「13時30分開場」の形式の開場時刻を含む。
 
 								concert.kaijou = Pattern.compile(".*([0-9０-９][0-9０-９])時([0-9０-９][0-9０-９])分開場.*").matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(line, "開場[ 　]*：* *[0-9][0-9][:：][0-9][0-9]"))
+							else if (Pattern.matches(".*開場[ 　]*：* *[0-9][0-9][:：][0-9][0-9].*", line))
 							{
 								// 「開場：13:30」の形式の開場時刻を含む。
 
@@ -175,28 +204,28 @@ public class NewConcertDocument
 								kakutei = true;
 							}
 
-							if (Pattern.matches(line, "[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演"))
+							if (Pattern.matches(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演.*", line))
 							{
 								// 「14:00開演」の形式の開演時刻を含む。
 
 								concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]) *開演.*").matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(line, "[0-9０-９][0-9０-９]時[0-9０-９][0-9０-９]分 *開演"))
+							else if (Pattern.matches(".*[0-9０-９][0-9０-９]時[0-9０-９][0-9０-９]分 *開演.*", line))
 							{
 								// 「14時00分開演」の形式の開演時刻を含む。
 
 								concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])時([0-9０-９][0-9０-９])分 *開演.*").matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(line, "[0-9０-９][0-9０-９]時開演"))
+							else if (Pattern.matches(".*[0-9０-９][0-9０-９]時開演.*", line))
 							{
 								// 「14時開演」の形式の開演時刻を含む。
 
 								concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])時開演.*").matcher(line).replaceAll("$1:00");
 								kakutei = true;
 							}
-							else if (Pattern.matches(line, "午後[0-9０-９]時開演"))
+							else if (Pattern.matches(".*午後[0-9０-９]時開演.*", line))
 							{
 								// 「午後2時開演」の形式の開演時刻を含む。
 
@@ -204,14 +233,14 @@ public class NewConcertDocument
 								concert.kaien = String.format("%d:00", Integer.valueOf(ZenkakuHankakuConverter.ConvertZenkakuToHankaku(hour12)) + 12);
 								kakutei = true;
 							}
-							else if (Pattern.matches(line, "開演[ 　]*[0-9][0-9][:：][0-9][0-9]"))
+							else if (Pattern.matches(".*開演[ 　]*[0-9][0-9][:：][0-9][0-9].*", line))
 							{
 								// 「開演14:00」の形式の開演時刻を含む。
 
 								concert.kaien = Pattern.compile(".*開演[ 　]*([0-9][0-9])[:：]([0-9][0-9]).*").matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(line, "開演[ 　]*：* *[0-9][0-9][:：][0-9][0-9]"))
+							else if (Pattern.matches(".*開演[ 　]*：* *[0-9][0-9][:：][0-9][0-9].*", line))
 							{
 								// 「開演：14:00」の形式の開演時刻を含む。
 
@@ -243,7 +272,7 @@ public class NewConcertDocument
 							continue;
 						}
 
-						if (line.endsWith("全席自由"))
+						if (line.indexOf("全席自由") >= 0)
 						{
 							// 料金情報を含む。
 
@@ -305,7 +334,7 @@ public class NewConcertDocument
 							continue;
 						}
 
-						if (Pattern.matches(line, ".*駅.*口"))
+						if (Pattern.matches(".*駅.*口", line))
 						{
 							// 会場案内を含む。
 
@@ -314,7 +343,7 @@ public class NewConcertDocument
 
 						for (int j = 0; j < composerSurrogates.length; j++)
 						{
-							if (Pattern.matches(line, composerSurrogates[j][0] + "[ 　]*[/:／：][ 　]*"))
+							if (Pattern.matches(composerSurrogates[j][0] + "[ 　]*[/:／：][ 　]*", line))
 							{
 								// 作曲家：曲名の形式。
 
@@ -327,7 +356,7 @@ public class NewConcertDocument
 								break;
 							}
 
-							if (Pattern.matches(line, composerSurrogates[j][0] + "作曲「.*」"))
+							if (Pattern.matches(composerSurrogates[j][0] + "作曲「.*」", line))
 							{
 								// 作曲家作曲「曲名」の形式。
 
@@ -342,7 +371,7 @@ public class NewConcertDocument
 
 						for (int j = 0; j < composers.length; j++)
 						{
-							if (Pattern.matches(line, composers[j] + "[ \t]*[/:／：　][ \t]*"))
+							if (Pattern.matches(composers[j] + "[ \t]*[/:／：　][ \t]*.*", line))
 							{
 								// 作曲家：曲名の形式。
 
@@ -355,7 +384,7 @@ public class NewConcertDocument
 								break;
 							}
 
-							if (Pattern.matches(line, composers[j] + "  *.*"))
+							if (Pattern.matches(composers[j] + "  *.*", line))
 							{
 								// 作曲家 曲名の形式。
 
@@ -367,7 +396,7 @@ public class NewConcertDocument
 								break;
 							}
 
-							if (Pattern.matches(line, composers[j] + "作曲「.*」"))
+							if (Pattern.matches(composers[j] + "作曲「.*」", line))
 							{
 								// 作曲家作曲「曲名」の形式。
 
@@ -379,7 +408,7 @@ public class NewConcertDocument
 								break;
 							}
 
-							if (Pattern.matches(line, composers[j] + "作曲[ 　].*"))
+							if (Pattern.matches(composers[j] + "作曲[ 　].*", line))
 							{
 								// 作曲家作曲 曲名の形式。
 
@@ -391,7 +420,7 @@ public class NewConcertDocument
 								break;
 							}
 
-							if (Pattern.matches(line, composers[j] + "「.*」"))
+							if (Pattern.matches(composers[j] + "「.*」", line))
 							{
 								// 作曲家「曲名」の形式。
 
@@ -413,7 +442,7 @@ public class NewConcertDocument
 
 						for (int j = 0; j < composers.length; j++)
 						{
-							if (Pattern.matches(line, ".* *[/／] *" + composers[j]))
+							if (Pattern.matches(".* *[/／] *" + composers[j], line))
 							{
 								// 曲名／作曲家の形式。
 
@@ -426,7 +455,7 @@ public class NewConcertDocument
 								break;
 							}
 
-							if (Pattern.matches(line, ".*[(（]" + composers[j]))
+							if (Pattern.matches(".*[(（]" + composers[j], line))
 							{
 								// 曲名（作曲家）の形式。
 
@@ -448,8 +477,8 @@ public class NewConcertDocument
 
 						for (int j = 0; j < composers.length; j++)
 						{
-							if (line == composers[j] ||
-								line == composers[j] + "作曲" ||
+							if (line.equals(composers[j]) ||
+								line.equals(composers[j] + "作曲") ||
 								line.indexOf("オール" + composers[j] + "プログラム") >= 0)
 							{
 								// 作曲家名の行である。
@@ -484,7 +513,7 @@ public class NewConcertDocument
 
 						for (int j = 0; j < playerNames.length && !kakutei; j++)
 						{
-							if (line == playerNames[j] &&
+							if (line.equals(playerNames[j]) &&
 								(line.startsWith("Ensemble") ||
 								line.endsWith("楽団") ||
 								line.startsWith("オーケストラ") ||
@@ -535,9 +564,9 @@ public class NewConcertDocument
 								break;
 							}
 
-							if (Pattern.matches(line, partNames[j] + "[ 　:：]") ||
-								Pattern.matches(line, partNames[j] + "ソロ[ 　:：]") ||
-								Pattern.matches(line, partNames[j] + "独奏[ 　:：]"))
+							if (Pattern.matches(partNames[j] + "[ 　:：]", line) ||
+								Pattern.matches(partNames[j] + "ソロ[ 　:：]", line) ||
+								Pattern.matches(partNames[j] + "独奏[ 　:：]", line))
 							{
 								// パート名から始まっている。
 
@@ -569,18 +598,7 @@ public class NewConcertDocument
 		return concert;
 	}
 
-	static public void main(String[] args)
-		throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException
-	{
-		NewConcertDocument document = new NewConcertDocument();
-        TransformerFactory transFactory = TransformerFactory.newInstance();
-        Transformer transformer = transFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        document.write(transformer, new PrintWriter(System.out));
-	}
-
-	public NewConcertDocument()
+	public NewConcertDocument(ArrayList<ConcertInformation> concertInformations)
 		throws ParserConfigurationException, TransformerConfigurationException, TransformerFactoryConfigurationError
 	{
 		Element top = createElement("c:concertCollection");
@@ -589,28 +607,35 @@ public class NewConcertDocument
 		top.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:c", "concert");
 		top.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", "concert Concert.xsd");
 
-		Element concert = createElement("concert");
-		top.appendChild(concert);
-		concert.setAttribute("name", "name");
-		concert.setAttribute("date", "2017/11/11");
-		concert.setAttribute("kaijou", "12:00");
-		concert.setAttribute("kaien", "12:00");
-		concert.setAttribute("hall", "hall");
+		for (ConcertInformation concertInformation : concertInformations)
+		{
+			Element concert = createElement("concert");
+			top.appendChild(concert);
+			concert.setAttribute("name", concertInformation.name);
+			concert.setAttribute("date", concertInformation.date);
+			concert.setAttribute("kaijou", concertInformation.kaijou);
+			concert.setAttribute("kaien", concertInformation.kaien);
+			concert.setAttribute("hall", concertInformation.hall);
 
-		Element kyokuCollection = createElement("kyokuCollection");
-		concert.appendChild(kyokuCollection);
+			Element kyokuCollection = createElement("kyokuCollection");
+			concert.appendChild(kyokuCollection);
+			for (StringAndString composerNameAndTitle : concertInformation.composerNameAndTitles)
+			{
+				Element kyoku = createElement("kyoku");
+				kyokuCollection.appendChild(kyoku);
+				kyoku.setAttribute("composer", composerNameAndTitle.string1);
+				kyoku.setAttribute("title", composerNameAndTitle.string2);
+			}
 
-		Element kyoku = createElement("kyoku");
-		kyokuCollection.appendChild(kyoku);
-		kyoku.setAttribute("composer", "composer");
-		kyoku.setAttribute("title", "title");
-
-		Element playerCollection = createElement("playerCollection");
-		concert.appendChild(playerCollection);
-
-		Element player = createElement("player");
-		playerCollection.appendChild(player);
-		player.setAttribute("name", "name");
-		player.setAttribute("part", "part");
+			Element playerCollection = createElement("playerCollection");
+			concert.appendChild(playerCollection);
+			for (StringAndString partAndPlayer : concertInformation.partAndPlayers)
+			{
+				Element player = createElement("player");
+				playerCollection.appendChild(player);
+				player.setAttribute("name", partAndPlayer.string1);
+				player.setAttribute("part", partAndPlayer.string2);
+			}
+		}
 	}
 }

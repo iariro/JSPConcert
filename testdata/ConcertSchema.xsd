@@ -57,14 +57,14 @@
   <xsd:simpleType name="hallName">
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="松戸森のホール２１" />
-      <xsd:enumeration value="鎌ヶ谷市レインボーホール" />
+      <xsd:enumeration value="すみだトリフォニーホール" />
       <xsd:enumeration value="市川市文化会館" />
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:simpleType name="playerName">
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="松戸シティフィルハーモニー管弦楽団" />
-      <xsd:enumeration value="鎌ヶ谷フィルハーモニック管弦楽団" />
+      <xsd:enumeration value="ル スコアール管弦楽団" />
       <xsd:enumeration value="市川交響楽団" />
     </xsd:restriction>
   </xsd:simpleType>
@@ -79,7 +79,7 @@
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="シベリウス" />
       <xsd:enumeration value="モーツァルト" />
-      <xsd:enumeration value="シューマン" />
+      <xsd:enumeration value="マーラー" />
     </xsd:restriction>
   </xsd:simpleType>
 </xsd:schema>

@@ -23,10 +23,10 @@ public class ConcertInformation
 	public String kaijou;
 	public String kaien;
 
-	/// <summary>
-	/// メンバーの初期化。
-	/// </summary>
-	/// <param name="index">加工対象XML中のノードインデックス</param>
+	/**
+	 * メンバーの初期化。
+	 * @param index 加工対象XML中のノードインデックス
+	 */
 	public ConcertInformation(int index)
 	{
 		this.index = index;
@@ -207,5 +207,24 @@ public class ConcertInformation
 						return Integer.compare(xindex, yindex);
 					}					
 				});
+	}
+
+	/**
+	 * 標準出力にダンプ
+	 */
+	public void dump()
+	{
+		System.out.printf("name=%s date=%s kaijou=%s kaien=%s hall=%s ryoukin=%s", name, date, getKaijou(), kaien, hall, ryoukin);
+		System.out.println();
+		for (StringAndString composerNameAndTitle : composerNameAndTitles)
+		{
+			System.out.printf("%s:%s", composerNameAndTitle.string1, composerNameAndTitle.string2);
+			System.out.println();
+		}
+		for (StringAndString partAndPlayer : partAndPlayers)
+		{
+			System.out.printf("%s:%s", partAndPlayer.string1, partAndPlayer.string2);
+			System.out.println();
+		}
 	}
 }
