@@ -2,6 +2,7 @@ package kumagai.concert.crawler;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,10 +16,21 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.xml.sax.SAXException;
+
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
+import ktool.io.StringListFromFile;
 import kumagai.concert.PastConcertInfo;
 import kumagai.concert.PastOrchestraList2;
 
@@ -62,10 +74,9 @@ public class ConcertInfoCrawler
 	/**
 	 * コンサート情報収集処理
 	 * @param args db|net outdir
-	 * @throws SQLException
 	 */
 	static public void main(String[] args)
-		throws IOException, SQLException
+		throws IOException, SQLException, ParserConfigurationException, TransformerFactoryConfigurationError, SAXException, XPathExpressionException, TransformerException
 	{
 		String source = null;
 		if (args.length < 2)
@@ -76,6 +87,7 @@ public class ConcertInfoCrawler
 			return;
 		}
 		source = args[0];
+		String outdir = args[1];
 
 		ArrayList<PastConcertInfo> urlAndNames;
 		if (source.equals("net"))
@@ -107,14 +119,21 @@ public class ConcertInfoCrawler
 			System.out.println("Usage: db|net");
 			return;
 		}
+		ConcertSchemaDocument schemaDocument = new ConcertSchemaDocument("testdata/ConcertSchema.xsd");
+		String [] halls = schemaDocument.getHalls();
+		String [] playerNames = schemaDocument.getPlayerNames();
+		String [] partNames = schemaDocument.getPartNames();
+		String [] composers = schemaDocument.getComposerNames();
+		String [] lines = new StringListFromFile("testdata/concert.txt", "utf-8").toArray(new String[]{});
 
-		PrintWriter fileNew = new PrintWriter(new File(args[1], "Concert_new.txt"));
-		PrintWriter fileOld = new PrintWriter(new File(args[1], "Concert_old.txt"));
-		PrintWriter fileError = new PrintWriter(new File(args[1], "Concert_error.txt"));
+		PrintWriter fileNew = new PrintWriter(new File(outdir, "Concert_new.txt"));
+		PrintWriter fileOld = new PrintWriter(new File(outdir, "Concert_old.txt"));
+		PrintWriter fileError = new PrintWriter(new File(outdir, "Concert_error.txt"));
 
 		String maxspanOrchestra = null;
 		DateTime start = new DateTime();
 		TimeSpan maxspan = null;
+		ArrayList<ConcertInformation> concertInformations = new ArrayList<ConcertInformation>();
 		for (int i=0 ; i<urlAndNames.size() ; i++)
 		{
 			DateTime split1 = new DateTime();
@@ -170,6 +189,10 @@ public class ConcertInfoCrawler
 					if (concertInfo != null)
 					{
 						// 情報あり
+
+						ConcertInformation concertInformation =
+							NewConcertDocument.trimConcertInfo(0, lines, halls, composers, partNames, playerNames);
+						concertInformations.add(concertInformation);
 
 						PrintWriter file;
 						String date = ConcertInfoCrawler.extractDate(concertInfo);
@@ -249,6 +272,12 @@ public class ConcertInfoCrawler
 		fileOld.close();
 		fileNew.close();
 		fileError.close();
+
+		NewConcertDocument document = new NewConcertDocument(concertInformations);
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+		document.write(transformer, new FileWriter(new File(outdir, "NewConcert.xml")));
 
 		DateTime end = new DateTime();
 		System.out.printf("%s -> %s = %s\n", start.toFullString(), end.toFullString(), end.diff(start));
