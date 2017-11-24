@@ -1,7 +1,14 @@
 package kumagai.concert;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.TreeMap;
+
+import ktool.datetime.DateTime;
 
 /**
  * Concertクラスによるコンサート情報のコレクション。
@@ -60,6 +67,29 @@ public class ConcertCollection
 		statement.executeUpdate();
 
 		statement.close();
+	}
+
+	/**
+	 * 更新日ごとの登録件数を取得
+	 * @param connection DB接続オブジェクト
+	 * @param statement DBステートメント
+	 * @return 更新日ごとの登録件数コレクション
+	 */
+	static public TreeMap<DateTime, Integer> getConcertCountPerUpdateDate(Connection connection, Statement statement)
+		throws SQLException
+	{
+		String sql = "select updatedate, count(*) as count from concert group by updatedate order by updatedate";
+
+		ResultSet result = statement.executeQuery(sql);
+
+		TreeMap<DateTime, Integer> concertCounts = new TreeMap<DateTime, Integer>();
+		while (result.next())
+		{
+			concertCounts.put(new DateTime(result.getDate("updatedate")), result.getInt("count"));
+		}
+		result.close();
+
+		return concertCounts;
 	}
 
 	/**
