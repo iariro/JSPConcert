@@ -7,7 +7,7 @@ package kumagai.concert;
 public class StringAndString
 {
 	public final String string1;
-	public final String string2;
+	public String string2;
 
 	/**
 	 * 文字列１を取得。

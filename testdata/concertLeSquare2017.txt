@@ -1,0 +1,35 @@
+﻿ル スコアール管弦楽団
+@import url( http://lesquare.oops.jp/wp-content/themes/EasyAll/style.css );
+ル スコアール管弦楽団
+Le Square Orchestra
+2017年演奏会
+自己紹介
+団員募集
+練習日程
+過去の演奏会
+リンク集
+団内お知らせ
+ル スコアール管弦楽団
+2017年演奏会
+ル スコアール管弦楽団第43回演奏会のお知らせ
+日　　時:
+2017年11月19日（日)14:00開演
+場　　所:
+すみだトリフォニーホール　大ホール
+曲　　目:
+マーラー／交響曲第3番
+メゾソプラノ:
+三宮　美穂
+合　　唱:
+フレーベル少年合唱団、武蔵野合唱団
+指　　揮:
+松岡　究
+入場料:
+全席自由 1,000円 当日券あり、当日券販売開始は12:30
+※前売り券の販売は販売枚数が上限に達しましたので終了しました。当日券をご利用下さい。
+※他団体のチラシはさみは、申し込み多数のため受け付け終了しました。
+その他のお問い合わせ:webmaster@lesquare.org
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+<rdf:Description rdf:about="http://lesquare.oops.jp/"

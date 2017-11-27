@@ -1,0 +1,85 @@
+<xsd:schema xmlns="concert" targetNamespace="concert" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:simpleType name="notEmptyString">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="concertCollection">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="concert" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="hall">
+                <xsd:complexType>
+                  <xsd:attribute name="name" type="hallName" />
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="kyokuCollection">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="kyoku" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:attribute name="composer" type="composerName" />
+                        <xsd:attribute name="title" type="notEmptyString" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="playerCollection">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="player" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:attribute name="name" type="playerName" />
+                        <xsd:attribute name="part" type="partName" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="ryoukin">
+                <xsd:complexType>
+                  <xsd:attribute name="value" type="xsd:string" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="name" type="xsd:string" />
+            <xsd:attribute name="date" type="notEmptyString" />
+            <xsd:attribute name="kaijou" type="xsd:string" />
+            <xsd:attribute name="kaien" type="xsd:string" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:simpleType name="hallName">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="松戸森のホール２１" />
+      <xsd:enumeration value="すみだトリフォニーホール" />
+      <xsd:enumeration value="市川市文化会館" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="playerName">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="松戸シティフィルハーモニー管弦楽団" />
+      <xsd:enumeration value="ル スコアール管弦楽団" />
+      <xsd:enumeration value="市川交響楽団" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="partName">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="管弦楽" />
+      <xsd:enumeration value="指揮" />
+      <xsd:enumeration value="合唱" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="composerName">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="シベリウス" />
+      <xsd:enumeration value="モーツァルト" />
+      <xsd:enumeration value="マーラー" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>
