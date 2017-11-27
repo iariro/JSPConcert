@@ -32,7 +32,7 @@ public class ConcertCollectionTest
 		ConcertCollection.delete(connection, 4983);
 	}
 
-	public void testgetConcertCountPerUpdateDate() throws SQLException
+	public void testGetConcertCountPerUpdateDate() throws SQLException
 	{
 		DriverManager.registerDriver(new SQLServerDriver());
 		Connection connection = java.sql.DriverManager.getConnection(connectionString);

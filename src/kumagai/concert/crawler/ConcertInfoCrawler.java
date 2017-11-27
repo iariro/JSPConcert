@@ -30,7 +30,6 @@ import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
-import ktool.io.StringListFromFile;
 import kumagai.concert.PastConcertInfo;
 import kumagai.concert.PastOrchestraList2;
 
@@ -119,12 +118,11 @@ public class ConcertInfoCrawler
 			System.out.println("Usage: db|net");
 			return;
 		}
-		ConcertSchemaDocument schemaDocument = new ConcertSchemaDocument("testdata/ConcertSchema.xsd");
+		ConcertSchemaDocument schemaDocument = new ConcertSchemaDocument("private/data/concert/ConcertSchema.xsd");
 		String [] halls = schemaDocument.getHalls();
 		String [] playerNames = schemaDocument.getPlayerNames();
 		String [] partNames = schemaDocument.getPartNames();
 		String [] composers = schemaDocument.getComposerNames();
-		String [] lines = new StringListFromFile("testdata/concert.txt", "utf-8").toArray(new String[]{});
 
 		PrintWriter fileNew = new PrintWriter(new File(outdir, "Concert_new.txt"));
 		PrintWriter fileOld = new PrintWriter(new File(outdir, "Concert_old.txt"));
@@ -191,7 +189,7 @@ public class ConcertInfoCrawler
 						// 情報あり
 
 						ConcertInformation concertInformation =
-							NewConcertDocument.trimConcertInfo(0, lines, halls, composers, partNames, playerNames);
+							NewConcertDocument.trimConcertInfo(i, concertInfo, halls, composers, partNames, playerNames);
 						concertInformations.add(concertInformation);
 
 						PrintWriter file;
