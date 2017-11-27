@@ -31,9 +31,9 @@ public class NewConcertDocumentTest
 	public void testLeSquare201711()
 		throws FileNotFoundException, IOException
 	{
-		String [] lines = new StringListFromFile("testdata/concert_LeSquare201711.txt", "utf-8").toArray(new String[]{});
+		String [] lines = new StringListFromFile("testdata/concert_LeSquare201711.txt").toArray(new String[]{});
 		ConcertInformation concert =
-			NewConcertDocument.trimConcertInfo(0, "xxxオーケストラ", lines, halls, composers, partNames, playerNames);
+			NewConcertDocument.trimConcertInfo(0, "ル スコアール管弦楽団", lines, halls, composers, partNames, playerNames);
 
 		assertEquals("第43回演奏会", concert.name);
 		assertEquals("2017/11/19", concert.date);
@@ -44,12 +44,14 @@ public class NewConcertDocumentTest
 		assertEquals(1, concert.composerNameAndTitles.size());
 		assertEquals("マーラー", concert.composerNameAndTitles.get(0).string1);
 		assertEquals("交響曲第3番", concert.composerNameAndTitles.get(0).string2);
+		assertEquals(1, concert.partAndPlayers.size());
+		assertEquals("ル スコアール管弦楽団", concert.partAndPlayers.get(0).string2);
 	}
 
 	public void testTraum2017()
 		throws FileNotFoundException, IOException
 	{
-		String [] lines = new StringListFromFile("testdata/concert_Traum201810.txt", "utf-8").toArray(new String[]{});
+		String [] lines = new StringListFromFile("testdata/concert_Traum201810.txt").toArray(new String[]{});
 		ConcertInformation concert =
 			NewConcertDocument.trimConcertInfo(0, "xxxオーケストラ", lines, halls, composers, partNames, playerNames);
 
@@ -66,12 +68,17 @@ public class NewConcertDocumentTest
 		assertEquals("交響曲第8番 ト長調 (B.163)", concert.composerNameAndTitles.get(1).string2);
 		assertEquals("ブラームス", concert.composerNameAndTitles.get(2).string1);
 		assertEquals("交響曲第2番 ニ長調", concert.composerNameAndTitles.get(2).string2);
+		assertEquals(2, concert.partAndPlayers.size());
+		assertEquals("管弦楽", concert.partAndPlayers.get(0).string1);
+		assertEquals("xxxオーケストラ", concert.partAndPlayers.get(0).string2);
+		assertEquals("指揮", concert.partAndPlayers.get(1).string1);
+		assertEquals("石川 智己", concert.partAndPlayers.get(1).string2);
 	}
 
 	public void testHikarigaoka201806()
 		throws FileNotFoundException, IOException
 	{
-		String [] lines = new StringListFromFile("testdata/concert_Hikarigaoka201806.txt", "utf-8").toArray(new String[]{});
+		String [] lines = new StringListFromFile("testdata/concert_Hikarigaoka201806.txt").toArray(new String[]{});
 		ConcertInformation concert =
 			NewConcertDocument.trimConcertInfo(0, "xxxオーケストラ", lines, halls, composers, partNames, playerNames);
 
@@ -88,5 +95,10 @@ public class NewConcertDocumentTest
 		assertEquals("交響曲第35番ニ長調「ハフナー」", concert.composerNameAndTitles.get(1).string2);
 		assertEquals("モーツァルト", concert.composerNameAndTitles.get(2).string1);
 		assertEquals("　交響曲第40番ト短調", concert.composerNameAndTitles.get(2).string2);
+		assertEquals(2, concert.partAndPlayers.size());
+		assertEquals("管弦楽", concert.partAndPlayers.get(0).string1);
+		assertEquals("xxxオーケストラ", concert.partAndPlayers.get(0).string2);
+		assertEquals("指揮", concert.partAndPlayers.get(1).string1);
+		assertEquals("喜古 恵理香", concert.partAndPlayers.get(1).string2);
 	}
 }

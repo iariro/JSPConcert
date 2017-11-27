@@ -25,6 +25,7 @@ public class ConcertInformation
 	public String kaijou;
 	public String kaien;
 	public boolean nameOk;
+	public boolean orchestraOk;
 
 	/**
 	 * メンバーの初期化。
@@ -57,7 +58,7 @@ public class ConcertInformation
 		if (this.date == null ||
 			DateTime.parseDateString(this.date).compareTo(DateTime.parseDateString(date2)) < 0)
 		{
-			// 既存より新しい
+			// 未指定又は既存より新しい
 
 			this.date = date2;
 		}

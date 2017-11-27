@@ -80,6 +80,7 @@ public class NewConcertDocument
 
 		concert.addPart("管弦楽");
 		concert.setPlayer(orchestraName);
+		concert.orchestraOk = true;
 
 		LineType lineType = LineType.None;
 		String composer = null;
@@ -121,8 +122,12 @@ public class NewConcertDocument
 								{
 									// オーケストラ名の行である。
 
-									concert.addPart("管弦楽");
-									concert.setPlayer(playerNames[j]);
+									if (!concert.orchestraOk)
+									{
+										concert.addPart("管弦楽");
+										concert.setPlayer(playerNames[j]);
+									}
+
 									line = Pattern.compile(playerNames[j] + "　*").matcher(line).replaceAll(empty);
 									break;
 								}
@@ -536,7 +541,8 @@ public class NewConcertDocument
 
 						for (int j = 0; j < playerNames.length && !kakutei; j++)
 						{
-							if (line.equals(playerNames[j]) &&
+							if (!concert.orchestraOk &&
+								line.equals(playerNames[j]) &&
 								(line.startsWith("Ensemble") ||
 								line.endsWith("楽団") ||
 								line.startsWith("オーケストラ") ||
@@ -549,6 +555,7 @@ public class NewConcertDocument
 								concert.addPart("管弦楽");
 								concert.setPlayer(playerNames[j]);
 								kakutei = true;
+								concert.orchestraOk = true;
 								break;
 							}
 
