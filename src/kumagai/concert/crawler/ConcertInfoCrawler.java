@@ -30,7 +30,6 @@ import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
-import ktool.io.StringListFromFile;
 import kumagai.concert.PastConcertInfo;
 import kumagai.concert.PastOrchestraList2;
 
