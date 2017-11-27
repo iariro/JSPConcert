@@ -1,11 +1,13 @@
 package kumagai.concert.crawler;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
+import ktool.datetime.DateTime;
 import kumagai.concert.StringAndString;
 
 /**
@@ -22,6 +24,7 @@ public class ConcertInformation
 	public ArrayList<StringAndString> partAndPlayers;
 	public String kaijou;
 	public String kaien;
+	public boolean nameOk;
 
 	/**
 	 * メンバーの初期化。
@@ -40,7 +43,18 @@ public class ConcertInformation
 	 */
 	public String getDate()
 	{
-		return ZenkakuHankakuConverter.ConvertZenkakuToHankaku(date);
+		return date;
+	}
+
+	public void setDate(String date)
+		throws ParseException
+	{
+		String date2 = ZenkakuHankakuConverter.ConvertZenkakuToHankaku(date);
+		if (this.date == null ||
+			DateTime.parseDateString(this.date).compareTo(DateTime.parseDateString(date2)) < 0)
+		{
+			this.date = date2;
+		}
 	}
 
 	/**

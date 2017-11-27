@@ -75,6 +75,7 @@ public class NewConcertDocument
 	{
 		ConcertInformation concert = new ConcertInformation(index);
 		LineType lineType = LineType.None;
+		String composer = null;
 		for (String line : lines)
 		{
 			line = line.trim();
@@ -99,7 +100,8 @@ public class NewConcertDocument
 					{
 						// 直前は何もなし。
 
-						if ((line.indexOf("演奏会") >= 0 ||
+						if (!concert.nameOk &&
+							(line.indexOf("演奏会") >= 0 ||
 							line.endsWith("コンサート") ||
 							line.endsWith("のつどい") ||
 							line.endsWith("Concert")))
@@ -123,6 +125,13 @@ public class NewConcertDocument
 							if (matcher.matches())
 							{
 								line = matcher.replaceAll("$1");
+								concert.nameOk = true;
+							}
+							matcher = Pattern.compile(".*(第.*回定期演奏会).*").matcher(line);
+							if (matcher.matches())
+							{
+								line = matcher.replaceAll("$1");
+								concert.nameOk = true;
 							}
 
 							concert.name = line;
@@ -140,8 +149,8 @@ public class NewConcertDocument
 						{
 							// yyyy年mm月dd日
 
-							concert.date =
-								Pattern.compile("[^0-9]*([0-9]*)年[ 　]*([0-9]*)月[ 　]*([0-9]*)日.*").matcher(line).replaceAll("$1/$2/$3");
+							concert.setDate(
+								Pattern.compile("[^0-9]*([0-9]*)年[ 　]*([0-9]*)月[ 　]*([0-9]*)日.*").matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
 						else if (Pattern.matches(".*[０-９]{4}年[０-９]*月[０-９]*日.*", line))
@@ -484,10 +493,12 @@ public class NewConcertDocument
 						{
 							if (line.equals(composers[j]) ||
 								line.equals(composers[j] + "作曲") ||
-								line.indexOf("オール" + composers[j] + "プログラム") >= 0)
+								line.indexOf("オール" + composers[j] + "プログラム") >= 0 ||
+								line.indexOf("オール・" + composers[j] + "・プログラム") >= 0)
 							{
 								// 作曲家名の行である。
 
+								composer  = composers[j];
 								concert.addComposer(composers[j]);
 								kakutei = true;
 								lineType = LineType.Composer;
@@ -550,6 +561,17 @@ public class NewConcertDocument
 									break;
 								}
 							}
+						}
+
+						if (line.indexOf("交響曲") >= 0 ||
+							line.indexOf("序曲") >= 0 ||
+							line.indexOf("バレエ音楽") >= 0)
+						{
+							// 曲目に見える
+
+							concert.addComposer(composer);
+							concert.setTitle(line);
+							kakutei = true;
 						}
 
 						if (kakutei)
