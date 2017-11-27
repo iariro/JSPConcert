@@ -33,7 +33,7 @@ public class NewConcertDocumentTest
 	{
 		String [] lines = new StringListFromFile("testdata/concertLeSquare2017.txt", "utf-8").toArray(new String[]{});
 		ConcertInformation concert =
-			NewConcertDocument.trimConcertInfo(0, lines, halls, composers, partNames, playerNames);
+			NewConcertDocument.trimConcertInfo(0, "ル スコアール管弦楽団", lines, halls, composers, partNames, playerNames);
 
 		assertEquals("2017年演奏会", concert.name);
 		assertEquals("2017/11/19", concert.date);
