@@ -2,10 +2,11 @@ package kumagai.concert.crawler;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -211,7 +212,12 @@ public class ConcertInfoCrawler
 							ConcertInformation concertInformation =
 								NewConcertDocument.trimConcertInfo
 									(i, urlAndName.orchestra, concertInfo, halls, composers, partNames, playerNames);
-							concertInformations.add(concertInformation);
+							if (concertInformation.composerNameAndTitles.size() > 0)
+							{
+								// 1曲でもある
+
+								concertInformations.add(concertInformation);
+							}
 						}
 
 						file.println(separateLine);
@@ -276,7 +282,7 @@ public class ConcertInfoCrawler
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-		document.write(transformer, new FileWriter(new File(outdir, "NewConcert.xml")));
+		document.write(transformer, new OutputStreamWriter(new FileOutputStream(new File(outdir, "NewConcert.xml")), "utf-8"));
 
 		DateTime end = new DateTime();
 		System.out.printf("%s -> %s = %s\n", start.toFullString(), end.toFullString(), end.diff(start));
