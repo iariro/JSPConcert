@@ -91,7 +91,6 @@ public class ConcertCollection
 			{
 				// nullではない
 
-				System.out.println(date);
 				concertCounts.put(new DateTime(date), result.getInt("count"));
 			}
 		}
