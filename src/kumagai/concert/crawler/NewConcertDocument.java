@@ -3,6 +3,7 @@ package kumagai.concert.crawler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -98,8 +99,7 @@ public class NewConcertDocument
 					{
 						// 直前は何もなし。
 
-						if (concert.name == null &&
-							(line.indexOf("演奏会") >= 0 ||
+						if ((line.indexOf("演奏会") >= 0 ||
 							line.endsWith("コンサート") ||
 							line.endsWith("のつどい") ||
 							line.endsWith("Concert")))
@@ -119,6 +119,11 @@ public class NewConcertDocument
 								}
 							}
 							line = line.replace("のお知らせ", empty);
+							Matcher matcher = Pattern.compile(".*(第.*回演奏会).*").matcher(line);
+							if (matcher.matches())
+							{
+								line = matcher.replaceAll("$1");
+							}
 
 							concert.name = line;
 							continue;
@@ -371,11 +376,11 @@ public class NewConcertDocument
 
 						for (int j = 0; j < composers.length; j++)
 						{
-							if (Pattern.matches(composers[j] + "[ \t]*[/:／：　][ \t]*.*", line))
+							if (Pattern.matches(".*" + composers[j] + "[ \t]*[/:／：…　][ \t]*.*", line))
 							{
 								// 作曲家：曲名の形式。
 
-								line = Pattern.compile(composers[j] + "[ \t]*[/:／：　][ \t]*").matcher(line).replaceAll(empty);
+								line = Pattern.compile(".*" + composers[j] + "[ \t]*[/:／：…　][ \t]*").matcher(line).replaceAll(empty);
 								line = Pattern.compile("曲　*目：").matcher(line).replaceAll(empty);
 
 								concert.addComposer(composers[j]);

@@ -1,0 +1,22 @@
+﻿最新演奏会情報 | Traum Symphoniker Official Web Site
+body {font-size:13px;font-family: Verdana, Helvetica, ＭＳ Ｐゴシック, Osaka, sans-serif;;color:#666666;bac
+本日 10 人 - 昨日 34 人 - 累計 82620 人 サイトマップ
+2012年に発足したアマチュアオーケストラ「Traum Symphoniker」の公式ホームページです。Traum Symphoniker Official Web Site
+TOP最新演奏会情報ブログメンバー募集お問い合わせ練習予定指導者紹介演奏会履歴掲示板
+最新演奏会情報HOME &gt; 最新演奏会情報第6回演奏会
+開催日：2018年10月8日（月･祝）15：00開演
+会場：パルテノン多摩 大ホール
+プログラム：
+A.ドヴォルザーク…『スラブ舞曲集』op.72 (B.147)より第2番「ドゥムカ」
+A.ドヴォルザーク…交響曲第8番 ト長調 op.88 (B.163)
+J.ブラームス…交響曲第2番 ニ長調 op.73
+指揮：石川智己
+主催：Traum Symphoniker
+microadCompass.queue = microadCompass.queue || [];
+microadCompass.queue.push({
+"spot": "5a1f445f82f6f8ad96dd7cccfd3256db",
+"url": "",
+"referrer": ""
+});
+Copyright (C) 2017 Traum Symphoniker 事務局 All rights reserved.- このページは かんたんホームページ作成 Grupo で開設されました -
+ト

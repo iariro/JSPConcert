@@ -31,15 +31,37 @@ public class NewConcertDocumentTest
 	public void testLeSquare2017()
 		throws FileNotFoundException, IOException
 	{
-		String [] lines = new StringListFromFile("testdata/concertLeSquare2017.txt", "utf-8").toArray(new String[]{});
+		String [] lines = new StringListFromFile("testdata/concert_LeSquare2017.txt", "utf-8").toArray(new String[]{});
 		ConcertInformation concert =
 			NewConcertDocument.trimConcertInfo(0, lines, halls, composers, partNames, playerNames);
 
-		assertEquals("2017年演奏会", concert.name);
+		assertEquals("第43回演奏会", concert.name);
 		assertEquals("2017/11/19", concert.date);
 		assertEquals("13:30", concert.getKaijou());
 		assertEquals("14:00", concert.getKaien());
 		assertEquals("すみだトリフォニーホール", concert.hall);
 		assertTrue(concert.ryoukin.indexOf("全席自由 1,000円 当日券あり") >= 0);
+	}
+
+	public void testTraum2017()
+		throws FileNotFoundException, IOException
+	{
+		String [] lines = new StringListFromFile("testdata/concert_Traum2017.txt", "utf-8").toArray(new String[]{});
+		ConcertInformation concert =
+			NewConcertDocument.trimConcertInfo(0, lines, halls, composers, partNames, playerNames);
+
+		assertEquals("第6回演奏会", concert.name);
+		assertEquals("2018/10/8", concert.date);
+		assertEquals("14:30", concert.getKaijou());
+		assertEquals("15:00", concert.getKaien());
+		assertEquals("パルテノン多摩", concert.hall);
+		assertNull(concert.ryoukin);
+		assertEquals(3, concert.composerNameAndTitles.size());
+		assertEquals("ドヴォルザーク", concert.composerNameAndTitles.get(0).string1);
+		assertEquals("『スラブ舞曲集』 (B.147)より第2番「ドゥムカ」", concert.composerNameAndTitles.get(0).string2);
+		assertEquals("ドヴォルザーク", concert.composerNameAndTitles.get(1).string1);
+		assertEquals("交響曲第8番 ト長調 (B.163)", concert.composerNameAndTitles.get(1).string2);
+		assertEquals("ブラームス", concert.composerNameAndTitles.get(2).string1);
+		assertEquals("交響曲第2番 ニ長調", concert.composerNameAndTitles.get(2).string2);
 	}
 }
