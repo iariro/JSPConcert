@@ -1,12 +1,13 @@
 package kumagai.concert;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 import ktool.datetime.DateTime;
 
@@ -75,17 +76,24 @@ public class ConcertCollection
 	 * @param statement DBステートメント
 	 * @return 更新日ごとの登録件数コレクション
 	 */
-	static public TreeMap<DateTime, Integer> getConcertCountPerUpdateDate(Connection connection, Statement statement)
+	static public LinkedHashMap<DateTime, Integer> getConcertCountPerUpdateDate(Connection connection, Statement statement)
 		throws SQLException
 	{
-		String sql = "select updatedate, count(*) as count from concert group by updatedate order by updatedate";
+		String sql = "select createdate, count(*) as count from concert group by createdate order by createdate desc";
 
 		ResultSet result = statement.executeQuery(sql);
 
-		TreeMap<DateTime, Integer> concertCounts = new TreeMap<DateTime, Integer>();
+		LinkedHashMap<DateTime, Integer> concertCounts = new LinkedHashMap<DateTime, Integer>();
 		while (result.next())
 		{
-			concertCounts.put(new DateTime(result.getDate("updatedate")), result.getInt("count"));
+			Date date = result.getDate("createdate");
+			if (date != null)
+			{
+				// nullではない
+
+				System.out.println(date);
+				concertCounts.put(new DateTime(date), result.getInt("count"));
+			}
 		}
 		result.close();
 

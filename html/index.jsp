@@ -111,6 +111,10 @@
 					<s:submit value="コンサートが終わった演奏者" />
 				</s:form>
 
+				<s:form action="concertcount" theme="simple">
+					<s:submit value="コンサート登録数" />
+				</s:form>
+
 			</td>
 			<td>
 

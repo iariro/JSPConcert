@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
@@ -20,7 +20,7 @@ public class ConcertCollectionTest
 {
 	static private final String connectionString = "jdbc:sqlserver://localhost:2144;DatabaseName=Concert;User=sa;Password=p@ssw0rd;";
 
-	public void testDelete()
+	public void _testDelete()
 		throws SQLException
 	{
 		DriverManager.registerDriver(new SQLServerDriver());
@@ -37,7 +37,8 @@ public class ConcertCollectionTest
 		DriverManager.registerDriver(new SQLServerDriver());
 		Connection connection = java.sql.DriverManager.getConnection(connectionString);
 		Statement statement = connection.createStatement();
-		TreeMap<DateTime,Integer> concertCount = ConcertCollection.getConcertCountPerUpdateDate(connection, statement);
+		LinkedHashMap<DateTime, Integer> concertCount = ConcertCollection.getConcertCountPerUpdateDate(connection, statement);
+		System.out.println(concertCount.size());
 		for (Entry<DateTime, Integer> entry : concertCount.entrySet())
 		{
 			System.out.printf("%s:%d", entry.getKey(), entry.getValue());

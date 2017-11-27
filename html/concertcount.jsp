@@ -15,17 +15,19 @@
 
 		<div class=hatena-body>
 		<div class=main>
+		<div class=day>
 
 			<table>
 				<tr><th>登録日</th><th>件数</th></tr>
 				<s:iterator value="concertCount">
 					<tr>
 						<td><s:property value="key" /></td>
-						<td><s:property value="value" /></td>
+						<td align='right'><s:property value="value" /></td>
 					</tr>
 				</s:iterator>
 			</table>
 
+		</div>
 		</div>
 		</div>
 
