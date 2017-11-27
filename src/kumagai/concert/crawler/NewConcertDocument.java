@@ -1,7 +1,9 @@
 package kumagai.concert.crawler;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -45,24 +47,25 @@ public class NewConcertDocument
 		String [] playerNames = schemaDocument.getPlayerNames();
 		String [] partNames = schemaDocument.getPartNames();
 		String [] composers = schemaDocument.getComposerNames();
-		String [] lines = new StringListFromFile("testdata/concert.txt", "utf-8").toArray(new String[]{});
+		String [] lines = new StringListFromFile("testdata/concertLeSquare2017.txt", "utf-8").toArray(new String[]{});
 		ConcertInformation concertInformation =
-			trimConcertInfo(0, lines, halls, composers, partNames, playerNames);
+			trimConcertInfo(0, "xxxオーケストラ", lines, halls, composers, partNames, playerNames);
 		concertInformation.dump();
 		ArrayList<ConcertInformation> concertInformations = new ArrayList<ConcertInformation>();
 		concertInformations.add(concertInformation);
 
 		NewConcertDocument document = new NewConcertDocument(concertInformations);
-        TransformerFactory transFactory = TransformerFactory.newInstance();
-        Transformer transformer = transFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        document.write(transformer, new PrintWriter(System.out));
+		TransformerFactory transFactory = TransformerFactory.newInstance();
+		Transformer transformer = transFactory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+		document.write(transformer, new OutputStreamWriter(new FileOutputStream(new File("..", "NewConcert.xml")), "utf-8"));
 	}
 
 	/**
 	 * テキストからコンサート情報を生成
 	 * @param index インデックス
+	 * @param orchestraName 管弦楽団の名前
 	 * @param lines 加工対象
 	 * @param halls ホール一覧
 	 * @param composers 作曲者一覧
@@ -70,9 +73,13 @@ public class NewConcertDocument
 	 * @param playerNames 演奏者一覧
 	 * @return コンサート情報
 	 */ 
-	static public ConcertInformation trimConcertInfo(int index, String [] lines, String [] halls, String [] composers, String [] partNames, String [] playerNames)
+	static public ConcertInformation trimConcertInfo(int index, String orchestraName, String [] lines, String [] halls, String [] composers, String [] partNames, String [] playerNames)
 	{
 		ConcertInformation concert = new ConcertInformation(index);
+
+		concert.addPart("管弦楽");
+		concert.setPlayer(orchestraName);
+
 		LineType lineType = LineType.None;
 		for (String line : lines)
 		{

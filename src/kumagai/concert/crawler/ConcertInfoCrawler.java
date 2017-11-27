@@ -2,10 +2,11 @@ package kumagai.concert.crawler;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -30,7 +31,6 @@ import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
-import ktool.io.StringListFromFile;
 import kumagai.concert.PastConcertInfo;
 import kumagai.concert.PastOrchestraList2;
 
@@ -189,10 +189,6 @@ public class ConcertInfoCrawler
 					{
 						// 情報あり
 
-						ConcertInformation concertInformation =
-							NewConcertDocument.trimConcertInfo(i, concertInfo, halls, composers, partNames, playerNames);
-						concertInformations.add(concertInformation);
-
 						PrintWriter file;
 						String date = ConcertInfoCrawler.extractDate(concertInfo);
 						if (date == null)
@@ -212,6 +208,11 @@ public class ConcertInfoCrawler
 							// 新しい情報
 
 							file = fileNew;
+
+							ConcertInformation concertInformation =
+								NewConcertDocument.trimConcertInfo
+									(i, urlAndName.orchestra, concertInfo, halls, composers, partNames, playerNames);
+							concertInformations.add(concertInformation);
 						}
 
 						file.println(separateLine);
@@ -276,7 +277,7 @@ public class ConcertInfoCrawler
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-		document.write(transformer, new FileWriter(new File(outdir, "NewConcert.xml")));
+		document.write(transformer, new OutputStreamWriter(new FileOutputStream(new File(outdir, "NewConcert.xml")), "utf-8"));
 
 		DateTime end = new DateTime();
 		System.out.printf("%s -> %s = %s\n", start.toFullString(), end.toFullString(), end.diff(start));
