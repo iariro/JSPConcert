@@ -24,7 +24,7 @@ public class PastOrchestraList2
 		throws SQLException
 	{
 		String sql =
-			"select Player.name, Player.siteurl, Player.siteencode, max(Concert.date) as date from Concert join Shutsuen on Shutsuen.concertId=Concert.id join Player on Player.id=Shutsuen.playerId where Shutsuen.partId=1 and active=? group by Player.name, Player.siteurl having max(Concert.date) < getdate() order by max(Concert.date)";
+			"select Player.id, Player.name, Player.siteurl, Player.siteencoding, max(Concert.date) as date from Concert join Shutsuen on Shutsuen.concertId=Concert.id join Player on Player.id=Shutsuen.playerId where Shutsuen.partId=1 and active=? group by Player.name, Player.siteurl having max(Concert.date) < getdate() order by max(Concert.date)";
 
 		PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -36,10 +36,11 @@ public class PastOrchestraList2
 		{
 			add(
 				new PastConcertInfo(
+					result.getInt("id"),
 					result.getString("name"),
 					result.getString("siteurl").length() > 0 ? result.getString("siteurl") : null,
 					new DateTime(result.getDate("date")).toFullString(),
-					result.getString("siteencode")));
+					result.getString("siteencoding")));
 		}
 
 		result.close();

@@ -6,29 +6,32 @@ package kumagai.concert;
  */
 public class PastConcertInfo
 {
+	public final Integer playerId;
 	public final String orchestra;
 	public final String url;
 	public final String date;
-	public final String encode;
+	public final String encoding;
 
 	/**
 	 * 指定の値をメンバーに割り当て
+	 * @param playerId 演奏者ID
 	 * @param orchestra 楽団名
 	 * @param url URL
 	 * @param date 日付
-	 * @param encode エンコード名
+	 * @param encoding エンコード名
 	 */
-	public PastConcertInfo(String orchestra, String url, String date, String encode)
+	public PastConcertInfo(Integer playerId, String orchestra, String url, String date, String encoding)
 	{
+		this.playerId = playerId;
 		this.orchestra = orchestra;
 		this.url = url;
 		this.date = date;
-		this.encode = encode;
+		this.encoding = encoding;
 	}
 
 	@Override
 	public String toString()
 	{
-		return String.format("%s %s %s", orchestra, date, url);
+		return String.format("%s %s %s %s", orchestra, date, url, encoding);
 	}
 }

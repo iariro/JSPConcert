@@ -22,16 +22,17 @@ public class PastOrchestraList1
 	{
 		ResultSet result =
 			statement.executeQuery(
-				"select Player.name, Player.siteurl, Player.siteencode from Player where id not in (select playerId from Shutsuen) and active=1");
+				"select Player.id, Player.name, Player.siteurl, Player.siteencoding from Player where id not in (select playerId from Shutsuen) and active=1");
 
 		while (result.next())
 		{
 			add(
 				new PastConcertInfo(
+					result.getInt("id"),
 					result.getString("name"),
 					result.getString("siteurl"),
 					null,
-					result.getString("siteencode")));
+					result.getString("siteencoding")));
 		}
 
 		result.close();

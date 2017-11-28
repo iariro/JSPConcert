@@ -61,7 +61,7 @@ public class ConcertInfoServer
 						{
 							// 楽団名あり→日付
 
-							urls.add(new PastConcertInfo(orchestra, url, line, null));
+							urls.add(new PastConcertInfo(null, orchestra, url, line, null));
 							url = null;
 							orchestra = null;
 						}

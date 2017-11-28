@@ -100,6 +100,27 @@ public class ConcertCollection
 	}
 
 	/**
+	 * コンサート情報更新。
+	 * @param connection DB接続
+	 * @param encoding 文字コード名
+	 * @param playerId ホールID
+	 */
+	static public void updateSiteEncoding(Connection connection, int playerId, String encoding)
+		throws SQLException
+	{
+		String sql = "update Player set encoding=? where id=?";
+
+		PreparedStatement statement = connection.prepareStatement(sql);
+
+		statement.setString(1, encoding);
+		statement.setInt(2, playerId);
+
+		statement.executeUpdate();
+
+		statement.close();
+	}
+
+	/**
 	 * DBからコンサート情報を取得しコレクションを生成する。
 	 * @param connection DB接続オブジェクト
 	 * @param statement1 DBステートメント１

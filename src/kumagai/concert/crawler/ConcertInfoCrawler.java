@@ -31,6 +31,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import ktool.datetime.DateTime;
 import ktool.datetime.TimeSpan;
+import kumagai.concert.ConcertCollection;
 import kumagai.concert.PastConcertInfo;
 import kumagai.concert.PastOrchestraList2;
 
@@ -41,7 +42,7 @@ import kumagai.concert.PastOrchestraList2;
 public class ConcertInfoCrawler
 {
 	static private final String separateLine = "-----------------------------------------------";
-	static private final String [] encodes = { "UTF-8", "Shift_JIS", "EUC-JP" };
+	static private final String [] encodings = { "UTF-8", "Shift_JIS", "EUC-JP" };
 	static private final String [] skipLines =
 		{
 			".*演奏会の情報を追加しました",
@@ -61,6 +62,8 @@ public class ConcertInfoCrawler
 			"^<a href.*"
 		};
 	static private final Pattern [] patternSkipLines;
+	static private final String connectionString =
+		"jdbc:sqlserver://localhost:2144;DatabaseName=Concert;User=sa;Password=p@ssw0rd;";
 
 	static
 	{
@@ -106,9 +109,7 @@ public class ConcertInfoCrawler
 			// DB
 
 			DriverManager.registerDriver(new SQLServerDriver());
-			Connection dbconnection =
-				DriverManager.getConnection
-					("jdbc:sqlserver://localhost:2144;DatabaseName=Concert;User=sa;Password=p@ssw0rd;");
+			Connection dbconnection = DriverManager.getConnection(connectionString);
 			urlAndNames = new PastOrchestraList2(dbconnection, true);
 			dbconnection.close();
 		}
@@ -161,26 +162,26 @@ public class ConcertInfoCrawler
 				}
 
 				boolean find = false;
-				int encodeIndex = 0;
-				if (urlAndName.encode != null)
+				int encodingIndex = 0;
+				if (urlAndName.encoding != null)
 				{
 					// エンコード指定あり
 
-					for (int j=0 ; j<encodes.length ; j++)
+					for (int j=0 ; j<encodings.length ; j++)
 					{
-						if (encodes[j].equals(urlAndName.encode))
+						if (encodings[j].equals(urlAndName.encoding))
 						{
 							// 一致する
 
-							encodeIndex = j;
+							encodingIndex = j;
 							break;
 						}
 					}
 				}
 
-				for (int j=0 ; j<encodes.length ; j++)
+				for (int j=0 ; j<encodings.length ; j++)
 				{
-					String encode = encodes[(encodeIndex + j) % encodes.length];
+					String encoding = encodings[(encodingIndex + j) % encodings.length];
 
 					URL url = new URL(urlAndName.url);
 
@@ -193,7 +194,7 @@ public class ConcertInfoCrawler
 
 					InputStream inputStream = url.openStream();
 					BufferedReader reader =
-						new BufferedReader(new InputStreamReader(inputStream, encode));
+						new BufferedReader(new InputStreamReader(inputStream, encoding));
 
 					int lineCount = 30;
 					if (urlAndName.url.indexOf("okesen") >= 0)
@@ -253,7 +254,7 @@ public class ConcertInfoCrawler
 						}
 
 						file.println(urlAndName.orchestra);
-						file.println(String.format("db=%s:now=%s %s", urlAndName.date, date, encode));
+						file.println(String.format("db=%s:now=%s %s", urlAndName.date, date, encoding));
 						find = true;
 					}
 
@@ -263,6 +264,22 @@ public class ConcertInfoCrawler
 					{
 						// 情報を見つけた＝このエンコードで当たり
 
+						if (urlAndName.encoding == null ||
+							!urlAndName.encoding.equals(encoding))
+						{
+							// エンコード指定なし・または異なる
+
+							// 更新
+							if (urlAndName.playerId != null)
+							{
+								// 演奏者IDあり
+
+								Connection dbconnection = DriverManager.getConnection(connectionString);
+								ConcertCollection.updateSiteEncoding
+									(dbconnection, urlAndName.playerId.intValue(), encoding);
+								dbconnection.close();
+							}
+						}
 						break;
 					}
 				}
