@@ -3,7 +3,7 @@ package kumagai.concert.struts2;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 import javax.servlet.ServletContext;
 
@@ -25,7 +25,7 @@ import kumagai.concert.ConcertCollection;
 @Result(name="success", location="/concert/concertcount.jsp")
 public class ConcertCountAction
 {
-	public TreeMap<DateTime,Integer> concertCount;
+	public LinkedHashMap<DateTime, Integer> concertCount;
 
 	/**
 	 * 更新日ごとの登録件数表示アクション。
