@@ -639,6 +639,10 @@ public class NewConcertDocument
 		return concert;
 	}
 
+	/**
+	 * コンサート情報から登録用XMLを構築
+	 * @param concertInformations コンサート情報
+	 */
 	public NewConcertDocument(ArrayList<ConcertInformation> concertInformations)
 		throws ParserConfigurationException, TransformerConfigurationException, TransformerFactoryConfigurationError
 	{
@@ -678,5 +682,35 @@ public class NewConcertDocument
 				player.setAttribute("part", partAndPlayer.string2);
 			}
 		}
+
+		// 手作業編集分の空要素を追加
+		Element concert = createElement("concert");
+		top.appendChild(concert);
+		concert.setAttribute("name", empty);
+		concert.setAttribute("date", empty);
+		concert.setAttribute("kaijou", "12:00");
+		concert.setAttribute("kaien", "12:00");
+		concert.setAttribute("hall", empty);
+
+		Element kyokuCollection = createElement("kyokuCollection");
+		concert.appendChild(kyokuCollection);
+		for (int i=0 ; i<3 ; i++)
+		{
+			Element kyoku = createElement("kyoku");
+			kyokuCollection.appendChild(kyoku);
+			kyoku.setAttribute("composer", "");
+			kyoku.setAttribute("title", "");
+		}
+
+		Element playerCollection = createElement("playerCollection");
+		concert.appendChild(playerCollection);
+		Element player = createElement("player");
+		playerCollection.appendChild(player);
+		player.setAttribute("name", "");
+		player.setAttribute("part", "管弦楽");
+		player = createElement("player");
+		playerCollection.appendChild(player);
+		player.setAttribute("name", "");
+		player.setAttribute("part", "指揮");
 	}
 }
