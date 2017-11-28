@@ -161,8 +161,27 @@ public class ConcertInfoCrawler
 				}
 
 				boolean find = false;
-				for (String encode : encodes)
+				int encodeIndex = 0;
+				if (urlAndName.encode != null)
 				{
+					// エンコード指定あり
+
+					for (int j=0 ; j<encodes.length ; j++)
+					{
+						if (encodes[j].equals(urlAndName.encode))
+						{
+							// 一致する
+
+							encodeIndex = j;
+							break;
+						}
+					}
+				}
+
+				for (int j=0 ; j<encodes.length ; j++)
+				{
+					String encode = encodes[(encodeIndex + j) % encodes.length];
+
 					URL url = new URL(urlAndName.url);
 
 					URLConnection connection = url.openConnection();

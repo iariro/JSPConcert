@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import ktool.datetime.DateTime;
-import kumagai.concert.PastConcertInfo;
 
 /**
  * 演奏会がすべて終わったオーケストラのリスト情報。
@@ -25,7 +24,7 @@ public class PastOrchestraList2
 		throws SQLException
 	{
 		String sql =
-			"select Player.name, Player.siteurl, max(Concert.date) as date from Concert join Shutsuen on Shutsuen.concertId=Concert.id join Player on Player.id=Shutsuen.playerId where Shutsuen.partId=1 and active=? group by Player.name, Player.siteurl having max(Concert.date) < getdate() order by max(Concert.date)";
+			"select Player.name, Player.siteurl, Player.siteencode, max(Concert.date) as date from Concert join Shutsuen on Shutsuen.concertId=Concert.id join Player on Player.id=Shutsuen.playerId where Shutsuen.partId=1 and active=? group by Player.name, Player.siteurl having max(Concert.date) < getdate() order by max(Concert.date)";
 
 		PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -39,7 +38,8 @@ public class PastOrchestraList2
 				new PastConcertInfo(
 					result.getString("name"),
 					result.getString("siteurl").length() > 0 ? result.getString("siteurl") : null,
-					new DateTime(result.getDate("date")).toFullString()));
+					new DateTime(result.getDate("date")).toFullString(),
+					result.getString("siteencode")));
 		}
 
 		result.close();

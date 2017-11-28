@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import kumagai.concert.PastConcertInfo;
-
 /**
  * 出演が何もないオーケストラのリスト情報。
  * @author kumagai
@@ -24,7 +22,7 @@ public class PastOrchestraList1
 	{
 		ResultSet result =
 			statement.executeQuery(
-				"select Player.name, Player.siteurl from Player where id not in (select playerId from Shutsuen) and active=1");
+				"select Player.name, Player.siteurl, Player.siteencode from Player where id not in (select playerId from Shutsuen) and active=1");
 
 		while (result.next())
 		{
@@ -32,7 +30,8 @@ public class PastOrchestraList1
 				new PastConcertInfo(
 					result.getString("name"),
 					result.getString("siteurl"),
-					null));
+					null,
+					result.getString("siteencode")));
 		}
 
 		result.close();
