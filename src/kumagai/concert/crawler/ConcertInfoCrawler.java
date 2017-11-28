@@ -254,7 +254,7 @@ public class ConcertInfoCrawler
 						}
 
 						file.println(urlAndName.orchestra);
-						file.println(String.format("db=%s:now=%s %s", urlAndName.date, date, encoding));
+						file.println(String.format("db=%s:now=%s encoding=%s->%s", urlAndName.date, date, urlAndName.encoding, encoding));
 						find = true;
 					}
 
