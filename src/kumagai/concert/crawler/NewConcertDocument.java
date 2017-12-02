@@ -678,8 +678,8 @@ public class NewConcertDocument
 			{
 				Element player = createElement("player");
 				playerCollection.appendChild(player);
-				player.setAttribute("name", partAndPlayer.string1);
-				player.setAttribute("part", partAndPlayer.string2);
+				player.setAttribute("part", partAndPlayer.string1);
+				player.setAttribute("name", partAndPlayer.string2);
 			}
 		}
 
