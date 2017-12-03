@@ -108,7 +108,7 @@ public class ConcertCollection
 	static public void updateSiteEncoding(Connection connection, int playerId, String encoding)
 		throws SQLException
 	{
-		String sql = "update Player set encoding=? where id=?";
+		String sql = "update Player set siteencoding=? where id=?";
 
 		PreparedStatement statement = connection.prepareStatement(sql);
 
