@@ -658,7 +658,7 @@ public class NewConcertDocument
 			top.appendChild(concert);
 			concert.setAttribute("name", concertInformation.name);
 			concert.setAttribute("date", concertInformation.date);
-			concert.setAttribute("kaijou", concertInformation.kaijou);
+			concert.setAttribute("kaijou", concertInformation.getKaijou());
 			concert.setAttribute("kaien", concertInformation.kaien);
 			concert.setAttribute("hall", concertInformation.hall);
 
