@@ -661,6 +661,7 @@ public class NewConcertDocument
 			concert.setAttribute("kaijou", concertInformation.getKaijou());
 			concert.setAttribute("kaien", concertInformation.kaien);
 			concert.setAttribute("hall", concertInformation.hall);
+			concert.setAttribute("ryoukin", concertInformation.ryoukin);
 
 			Element kyokuCollection = createElement("kyokuCollection");
 			concert.appendChild(kyokuCollection);
