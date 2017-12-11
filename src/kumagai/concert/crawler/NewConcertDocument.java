@@ -157,36 +157,36 @@ public class NewConcertDocument
 							continue;
 						}
 
-						if (Pattern.matches(".*[0-9]{4}年[ 　]*[0-9]*月[ 　]*[0-9]*日.*", line))
+						if (Pattern.matches(".*[0-9０-９]{4}年[ 　]*[0-9０-９]*月[ 　]*[0-9０-９]*日.*", line))
 						{
 							// yyyy年mm月dd日
 
 							concert.setDate(
-								Pattern.compile("[^0-9]*([0-9]*)年[ 　]*([0-9]*)月[ 　]*([0-9]*)日.*").matcher(line).replaceAll("$1/$2/$3"));
+								Pattern.compile("[^0-9]*([0-9０-９]*)年[ 　]*([0-9０-９]*)月[ 　]*([0-9０-９]*)日.*").matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
 						else if (Pattern.matches(".*[０-９]{4}年[０-９]*月[０-９]*日.*", line))
 						{
 							// ｙｙｙｙ年ｍｍ月ｄｄ日
 
-							concert.date =
-								Pattern.compile("[^０-９]([０-９]{4})年([０-９]*)月([０-９]*)日.*").matcher(line).replaceAll("$1/$2/$3");
+							concert.setDate(
+								Pattern.compile("[^０-９]([０-９]{4})年([０-９]*)月([０-９]*)日.*").matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
 						else if (Pattern.matches("[^0-9]*[0-9]{2}[/.][0-9]*[/.][0-9]*.*", line))
 						{
 							// yy/mm/dd or yy.mm.dd
 
-							concert.date =
-								Pattern.compile(".*([0-9]{2})[/.]([0-9]*)[/.]([0-9]*).*").matcher(line).replaceAll("20$1/$2/$3");
+							concert.setDate(
+								Pattern.compile(".*([0-9]{2})[/.]([0-9]*)[/.]([0-9]*).*").matcher(line).replaceAll("20$1/$2/$3"));
 							kakutei = true;
 						}
 						else if (line.indexOf("http") < 0 && Pattern.matches(".*[0-9]{4}/[0-9]*/[0-9]*.*", line))
 						{
 							// yyyy/mm/dd
 
-							concert.date =
-								Pattern.compile("[^0-9]*([0-9]{4})/([0-9]*)/([0-9]*).*").matcher(line).replaceAll("$1/$2/$3");
+							concert.setDate(
+								Pattern.compile("[^0-9]*([0-9]{4})/([0-9]*)/([0-9]*).*").matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
 

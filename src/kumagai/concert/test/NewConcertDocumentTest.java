@@ -101,4 +101,43 @@ public class NewConcertDocumentTest
 		assertEquals("指揮", concert.partAndPlayers.get(1).string1);
 		assertEquals("喜古 恵理香", concert.partAndPlayers.get(1).string2);
 	}
+
+	public void testKoutouCity201806()
+		throws FileNotFoundException, IOException
+	{
+		String [] lines = new StringListFromFile("testdata/concert_KoutouCity201806.txt").toArray(new String[]{});
+		ConcertInformation concert =
+			NewConcertDocument.trimConcertInfo(0, "江東シティオーケストラ", lines, halls, composers, partNames, playerNames);
+
+		assertEquals("第48回定期演奏会", concert.name);
+		assertEquals("2018/6/10", concert.date);
+		assertEquals("12:00", concert.getKaijou());
+		assertEquals("12:00", concert.getKaien());
+		assertEquals(null, concert.hall);
+		assertEquals(null, concert.ryoukin);
+		assertEquals(1, concert.composerNameAndTitles.size());
+		assertEquals("ブラームス", concert.composerNameAndTitles.get(0).string1);
+		assertEquals("交響曲第１番 ほか", concert.composerNameAndTitles.get(0).string2);
+		assertEquals(1, concert.partAndPlayers.size());
+		assertEquals("管弦楽", concert.partAndPlayers.get(0).string1);
+		assertEquals("江東シティオーケストラ", concert.partAndPlayers.get(0).string2);
+	}
+
+	public void testGakushuuin201805()
+		throws FileNotFoundException, IOException
+	{
+		String [] lines = new StringListFromFile("testdata/concert_Gakushuuin201805.txt").toArray(new String[]{});
+		ConcertInformation concert =
+			NewConcertDocument.trimConcertInfo(0, "学習院輔仁会音楽部", lines, halls, composers, partNames, playerNames);
+
+		assertEquals("第61回定期演奏会", concert.name);
+		assertEquals("2018/5/13", concert.date);
+		assertEquals("12:00", concert.getKaijou());
+		assertEquals("12:00", concert.getKaien());
+		assertEquals("すみだトリフォニーホール", concert.hall);
+		assertEquals(null, concert.ryoukin);
+		assertEquals(1, concert.partAndPlayers.size());
+		assertEquals("管弦楽", concert.partAndPlayers.get(0).string1);
+		assertEquals("学習院輔仁会音楽部", concert.partAndPlayers.get(0).string2);
+	}
 }
