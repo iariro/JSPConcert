@@ -692,6 +692,7 @@ public class NewConcertDocument
 		concert.setAttribute("kaijou", "12:00");
 		concert.setAttribute("kaien", "12:00");
 		concert.setAttribute("hall", empty);
+		concert.setAttribute("ryoukin", new String());
 
 		Element kyokuCollection = createElement("kyokuCollection");
 		concert.appendChild(kyokuCollection);
