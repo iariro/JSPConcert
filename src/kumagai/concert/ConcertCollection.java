@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import ktool.datetime.DateTime;
 
@@ -79,11 +80,13 @@ public class ConcertCollection
 	static public LinkedHashMap<DateTime, Integer> getConcertCountPerUpdateDate(Connection connection, Statement statement)
 		throws SQLException
 	{
-		String sql = "select createdate, count(*) as count from concert group by createdate order by createdate desc";
+		String sql = "select createdate, count(*) as count from concert group by createdate order by createdate";
 
 		ResultSet result = statement.executeQuery(sql);
 
 		LinkedHashMap<DateTime, Integer> concertCounts = new LinkedHashMap<DateTime, Integer>();
+		int count = 0;
+		int startCount = 0;
 		while (result.next())
 		{
 			Date date = result.getDate("createdate");
@@ -91,10 +94,22 @@ public class ConcertCollection
 			{
 				// nullではない
 
-				concertCounts.put(new DateTime(date), result.getInt("count"));
+				count += result.getInt("count");
+				concertCounts.put(new DateTime(date), count);
+			}
+			else
+			{
+				// null＝日付なしすべて
+
+				startCount = result.getInt("count");
 			}
 		}
 		result.close();
+
+		for (Entry<DateTime, Integer> entry : concertCounts.entrySet())
+		{
+			entry.setValue(entry.getValue() + startCount);
+		}
 
 		return concertCounts;
 	}
