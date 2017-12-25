@@ -140,4 +140,32 @@ public class NewConcertDocumentTest
 		assertEquals("管弦楽", concert.partAndPlayers.get(0).string1);
 		assertEquals("学習院輔仁会音楽部", concert.partAndPlayers.get(0).string2);
 	}
+
+	public void testAprico201802()
+		throws FileNotFoundException, IOException
+	{
+		String [] lines = new StringListFromFile("testdata/concert_aprico201802.txt").toArray(new String[]{});
+		ConcertInformation concert =
+			NewConcertDocument.trimConcertInfo(0, "アプリコ・シンフォニー・オーケストラ", lines, halls, composers, partNames, playerNames);
+
+		assertEquals("第29回定期演奏会", concert.name);
+		assertEquals("2018/02/12", concert.date);
+		assertEquals("13:30", concert.getKaijou());
+		assertEquals("14:00", concert.getKaien());
+		assertEquals("当日券１０００円", concert.ryoukin);
+		assertEquals(2, concert.partAndPlayers.size());
+		assertEquals("管弦楽", concert.partAndPlayers.get(0).string1);
+		assertEquals("アプリコ・シンフォニー・オーケストラ", concert.partAndPlayers.get(0).string2);
+		assertEquals("指揮", concert.partAndPlayers.get(1).string1);
+		//assertEquals("横島 勝人", concert.partAndPlayers.get(1).string2);
+		assertEquals(4, concert.composerNameAndTitles.size());
+		assertEquals("ブラームス", concert.composerNameAndTitles.get(0).string1);
+		assertEquals("交響曲第3番", concert.composerNameAndTitles.get(0).string2);
+		assertEquals("R.シュトラウス", concert.composerNameAndTitles.get(1).string1);
+		assertEquals("交響詩「死と変容」", concert.composerNameAndTitles.get(1).string2);
+		assertEquals("ブラームス", concert.composerNameAndTitles.get(2).string1);
+		assertEquals("悲劇的序曲", concert.composerNameAndTitles.get(2).string2);
+		assertEquals("ラフマニノフ", concert.composerNameAndTitles.get(3).string1);
+		assertEquals("交響曲第２番", concert.composerNameAndTitles.get(3).string2);
+	}
 }

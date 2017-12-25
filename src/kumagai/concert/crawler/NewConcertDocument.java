@@ -74,7 +74,9 @@ public class NewConcertDocument
 	 * @param playerNames 演奏者一覧
 	 * @return コンサート情報
 	 */ 
-	static public ConcertInformation trimConcertInfo(int index, String orchestraName, String [] lines, String [] halls, String [] composers, String [] partNames, String [] playerNames)
+	static public ConcertInformation trimConcertInfo(int index,
+		String orchestraName, String [] lines, String [] halls,
+		String [] composers, String [] partNames, String [] playerNames)
 	{
 		ConcertInformation concert = new ConcertInformation(index);
 
@@ -468,11 +470,11 @@ public class NewConcertDocument
 
 						for (int j = 0; j < composers.length; j++)
 						{
-							if (Pattern.matches(".* *[/／] *" + composers[j], line))
+							if (Pattern.matches(".*[ 　]*[/／].*" + composers[j], line))
 							{
 								// 曲名／作曲家の形式。
 
-								line = Pattern.compile(" *[/／] *" + composers[j]).matcher(line).replaceAll(empty);
+								line = Pattern.compile("[ 　]*[/／].*" + composers[j]).matcher(line).replaceAll(empty);
 								line = Pattern.compile("曲　*目[：　]*").matcher(line).replaceAll(empty);
 
 								concert.addComposer(composers[j]);
