@@ -94,8 +94,12 @@
 	</target>
 
 	<target name="compile">
-		<javac srcdir="src" destdir="bin" classpath="../KTool/bin">
+		<javac srcdir="src" destdir="bin" classpath="../KTool/bin:../lib/junit.jar" includeantruntime="false">
 			<include name="kumagai/concert/crawler/ConcertSchemaDocument.java" />
+			<include name="kumagai/concert/test/ConcertInfoServerTest.java" />
+			<include name="kumagai/concert/test/DateUtilityTest.java" />
+			<include name="kumagai/concert/test/HankakuZenkakuConvertTest.java" />
+			<include name="kumagai/concert/test/NewConcertDocumentTest.java" />
 		</javac>
 	</target>
 
