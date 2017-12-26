@@ -17,14 +17,6 @@
 		<available file="${TOMCAT_SITE_HOME}" />
 	</condition>
 
-	<target name="zip" description="PDAによる持ち出し用">
-		<zip
-			destfile="${PDA_HOME}/Temp/JSPConcert.zip"
-			basedir=".."
-			includes="project/**"
-			excludes="project/bin/**"/>
-	</target>
-
 	<target name="codeguess">
 		<taskdef name="codeguess" classname="kumagai.codeguess.CodeGuessTask" classpath="${JAVAPROJECTCHECKER_LIB}" />
 		<codeguess targetfilepath="src/">
