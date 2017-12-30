@@ -45,6 +45,18 @@ public class NewConcertDocument
 	static private final Pattern patternDate2 = Pattern.compile(".*[０-９]{4}年[０-９]*月[０-９]*日.*");
 	static private final Pattern patternDate3 = Pattern.compile("[^0-9]*[0-9]{2}[/.][0-9]*[/.][0-9]*.*");
 	static private final Pattern patternDate4 = Pattern.compile("[^0-9]*([0-9]{4})/([0-9]*)/([0-9]*).*");
+	static private final Pattern patternKaijouKaien1 = Pattern.compile(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開場[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演.*");
+	static private final Pattern patternKaijouKaien2 = Pattern.compile(".*開場[ 　]*：* *[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９][ 　]*開演[ 　]*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９].*");
+	static private final Pattern patternKaijou1 = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９])開場.*");
+	static private final Pattern patternKaijou2 = Pattern.compile(".*開場[ 　]*：* *([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]).*");
+	static private final Pattern patternKaijou3 = Pattern.compile(".*([0-9０-９][0-9０-９])時([0-9０-９][0-9０-９])分開場.*");
+	static private final Pattern patternKaien1 = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]) *開演.*");
+	static private final Pattern patternKaien2 = Pattern.compile(".*開演[ 　]*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]).*");
+	static private final Pattern patternKaien4 = Pattern.compile(".*([0-9０-９][0-9０-９])時開演.*");
+	static private final Pattern patternKaien5 = Pattern.compile(".*午後([0-9０-９])時開演.*");
+	static private final Pattern patternKaien6 = Pattern.compile(".*開演[ 　]*：* *([0-9][0-9])[:：]([0-9][0-9]).*");
+	static private final Pattern patternRyoukin1 = Pattern.compile("入場料[:：]* *");
+	static private final Pattern patternRyoukin2 = Pattern.compile("料金[:：]* *");
 
 	static public void main(String[] args)
 		throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException, SAXException, XPathExpressionException
@@ -194,87 +206,87 @@ public class NewConcertDocument
 							kakutei = true;
 						}
 
-						if (Pattern.matches(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開場[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演.*", line))
+						if (patternKaijouKaien1.matcher(line).matches())
 						{
 							// 「13:30開場 14:00開演」の形式の開場・開演時刻を含む。
 
-							concert.kaijou = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９])開場.*").matcher(line).replaceAll("$1:$2");
-							concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]) *開演.*").matcher(line).replaceAll("$1:$2");
+							concert.kaijou = patternKaijou1.matcher(line).replaceAll("$1:$2");
+							concert.kaien = patternKaien1.matcher(line).replaceAll("$1:$2");
 							kakutei = true;
 						}
-						else if (Pattern.matches(".*開場[ 　]*：* *[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９][ 　]*開演[ 　]*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９].*", line))
+						else if (patternKaijouKaien2.matcher(line).matches())
 						{
 							// 「開場13:30 開演14:00」の形式の開場・開演時刻を含む。
 
-							concert.kaijou = Pattern.compile(".*開場[ 　]*：* *([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]).*").matcher(line).replaceAll("$1:$2");
-							concert.kaien = Pattern.compile(".*開演[ 　]*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]).*").matcher(line).replaceAll("$1:$2");
+							concert.kaijou = patternKaijou2.matcher(line).replaceAll("$1:$2");
+							concert.kaien = patternKaien2.matcher(line).replaceAll("$1:$2");
 							kakutei = true;
 						}
 						else
 						{
-							if (Pattern.matches(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９]開場.*", line))
+							if (patternKaijou1.matcher(line).matches())
 							{
 								// 「13:30開場」の形式の開場時刻を含む。
 
-								concert.kaijou = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９])開場.*").matcher(line).replaceAll("$1:$2");
+								concert.kaijou = patternKaijou1.matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(".*[0-9０-９][0-9０-９]時[0-9０-９][0-9０-９]分開場.*", line))
+							else if (patternKaijou3.matcher(line).matches())
 							{
 								// 「13時30分開場」の形式の開場時刻を含む。
 
-								concert.kaijou = Pattern.compile(".*([0-9０-９][0-9０-９])時([0-9０-９][0-9０-９])分開場.*").matcher(line).replaceAll("$1:$2");
+								concert.kaijou = patternKaijou3.matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(".*開場[ 　]*：* *[0-9][0-9][:：][0-9][0-9].*", line))
+							else if (patternKaijou2.matcher(line).matches())
 							{
 								// 「開場：13:30」の形式の開場時刻を含む。
 
-								concert.kaijou = Pattern.compile(".*開場[ 　]*：* *([0-9][0-9])[:：]([0-9][0-9]).*").matcher(line).replaceAll("$1:$2");
+								concert.kaijou = patternKaijou2.matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
 
-							if (Pattern.matches(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演.*", line))
+							if (patternKaien1.matcher(line).matches())
 							{
 								// 「14:00開演」の形式の開演時刻を含む。
 
-								concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])[:：]([0-9０-９][0-9０-９]) *開演.*").matcher(line).replaceAll("$1:$2");
+								concert.kaien = patternKaien1.matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(".*[0-9０-９][0-9０-９]時[0-9０-９][0-9０-９]分 *開演.*", line))
+							else if (patternKaijou3.matcher(line).matches())
 							{
 								// 「14時00分開演」の形式の開演時刻を含む。
 
-								concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])時([0-9０-９][0-9０-９])分 *開演.*").matcher(line).replaceAll("$1:$2");
+								concert.kaien = patternKaijou3.matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(".*[0-9０-９][0-9０-９]時開演.*", line))
+							else if (patternKaien4.matcher(line).matches())
 							{
 								// 「14時開演」の形式の開演時刻を含む。
 
-								concert.kaien = Pattern.compile(".*([0-9０-９][0-9０-９])時開演.*").matcher(line).replaceAll("$1:00");
+								concert.kaien = patternKaien4.matcher(line).replaceAll("$1:00");
 								kakutei = true;
 							}
-							else if (Pattern.matches(".*午後[0-9０-９]時開演.*", line))
+							else if (patternKaien5.matcher(line).matches())
 							{
 								// 「午後2時開演」の形式の開演時刻を含む。
 
-								String hour12 = Pattern.compile(".*午後([0-9０-９])時開演.*").matcher(line).replaceAll("$1");
+								String hour12 = patternKaien5.matcher(line).replaceAll("$1");
 								concert.kaien = String.format("%d:00", Integer.valueOf(ZenkakuHankakuConverter.ConvertZenkakuToHankaku(hour12)) + 12);
 								kakutei = true;
 							}
-							else if (Pattern.matches(".*開演[ 　]*[0-9][0-9][:：][0-9][0-9].*", line))
+							else if (patternKaien2.matcher(line).matches())
 							{
 								// 「開演14:00」の形式の開演時刻を含む。
 
-								concert.kaien = Pattern.compile(".*開演[ 　]*([0-9][0-9])[:：]([0-9][0-9]).*").matcher(line).replaceAll("$1:$2");
+								concert.kaien = patternKaien2.matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
-							else if (Pattern.matches(".*開演[ 　]*：* *[0-9][0-9][:：][0-9][0-9].*", line))
+							else if (patternKaien6.matcher(line).matches())
 							{
 								// 「開演：14:00」の形式の開演時刻を含む。
 
-								concert.kaien = Pattern.compile(".*開演[ 　]*：* *([0-9][0-9])[:：]([0-9][0-9]).*").matcher(line).replaceAll("$1:$2");
+								concert.kaien = patternKaien6.matcher(line).replaceAll("$1:$2");
 								kakutei = true;
 							}
 						}
@@ -326,7 +338,7 @@ public class NewConcertDocument
 								// 料金情報を含む。
 
 								concert.ryoukin =
-									Pattern.compile("入場料[:：]* *").matcher(line).replaceAll(empty);
+									patternRyoukin1.matcher(line).replaceAll(empty);
 								continue;
 							}
 						}
@@ -336,7 +348,7 @@ public class NewConcertDocument
 							// 料金情報を含む。
 
 							concert.ryoukin =
-								Pattern.compile("料金[:：]* *").matcher(line).replaceAll(empty);
+								patternRyoukin2.matcher(line).replaceAll(empty);
 							continue;
 						}
 
