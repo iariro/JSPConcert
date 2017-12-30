@@ -39,6 +39,12 @@ public class NewConcertDocument
 			new String [] { "サン＝サーンス", "サン=サーンス" }
 		};
 	static private final String empty = new String();
+	static private final Pattern patternEnsoukai1 = Pattern.compile(".*(第.*回演奏会).*");
+	static private final Pattern patternEnsoukai2 = Pattern.compile(".*(第.*回定期演奏会).*");
+	static private final Pattern patternDate1 = Pattern.compile("[^0-9]*([0-9０-９]*)年[ 　]*([0-9０-９]*)月[ 　]*([0-9０-９]*)日.*");
+	static private final Pattern patternDate2 = Pattern.compile(".*[０-９]{4}年[０-９]*月[０-９]*日.*");
+	static private final Pattern patternDate3 = Pattern.compile("[^0-9]*[0-9]{2}[/.][0-9]*[/.][0-9]*.*");
+	static private final Pattern patternDate4 = Pattern.compile("[^0-9]*([0-9]{4})/([0-9]*)/([0-9]*).*");
 
 	static public void main(String[] args)
 		throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException, SAXException, XPathExpressionException
@@ -135,13 +141,13 @@ public class NewConcertDocument
 								}
 							}
 							line = line.replace("のお知らせ", empty);
-							Matcher matcher = Pattern.compile(".*(第.*回演奏会).*").matcher(line);
+							Matcher matcher = patternEnsoukai1.matcher(line);
 							if (matcher.matches())
 							{
 								line = matcher.replaceAll("$1");
 								concert.nameOk = true;
 							}
-							matcher = Pattern.compile(".*(第.*回定期演奏会).*").matcher(line);
+							matcher = patternEnsoukai2.matcher(line);
 							if (matcher.matches())
 							{
 								line = matcher.replaceAll("$1");
@@ -159,36 +165,32 @@ public class NewConcertDocument
 							continue;
 						}
 
-						if (Pattern.matches(".*[0-9０-９]{4}年[ 　]*[0-9０-９]*月[ 　]*[0-9０-９]*日.*", line))
+						if (patternDate1.matcher(line).matches())
 						{
 							// yyyy年mm月dd日
 
-							concert.setDate(
-								Pattern.compile("[^0-9]*([0-9０-９]*)年[ 　]*([0-9０-９]*)月[ 　]*([0-9０-９]*)日.*").matcher(line).replaceAll("$1/$2/$3"));
+							concert.setDate(patternDate1.matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
-						else if (Pattern.matches(".*[０-９]{4}年[０-９]*月[０-９]*日.*", line))
+						else if (patternDate2.matcher(line).matches())
 						{
 							// ｙｙｙｙ年ｍｍ月ｄｄ日
 
-							concert.setDate(
-								Pattern.compile("[^０-９]([０-９]{4})年([０-９]*)月([０-９]*)日.*").matcher(line).replaceAll("$1/$2/$3"));
+							concert.setDate(patternDate2.matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
-						else if (Pattern.matches("[^0-9]*[0-9]{2}[/.][0-9]*[/.][0-9]*.*", line))
+						else if (patternDate3.matcher(line).matches())
 						{
 							// yy/mm/dd or yy.mm.dd
 
-							concert.setDate(
-								Pattern.compile(".*([0-9]{2})[/.]([0-9]*)[/.]([0-9]*).*").matcher(line).replaceAll("20$1/$2/$3"));
+							concert.setDate(patternDate3.matcher(line).replaceAll("20$1/$2/$3"));
 							kakutei = true;
 						}
-						else if (line.indexOf("http") < 0 && Pattern.matches(".*[0-9]{4}/[0-9]*/[0-9]*.*", line))
+						else if (line.indexOf("http") < 0 && patternDate4.matcher(line).matches())
 						{
 							// yyyy/mm/dd
 
-							concert.setDate(
-								Pattern.compile("[^0-9]*([0-9]{4})/([0-9]*)/([0-9]*).*").matcher(line).replaceAll("$1/$2/$3"));
+							concert.setDate(patternDate4.matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
 
