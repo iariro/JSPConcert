@@ -17,7 +17,9 @@
 		<div class=day>
 
 		<h2>間近のコンサート</h2>
-
+		<s:form action="recentconcert" theme="simple">
+			<s:submit value="詳細表示" />
+		</s:form>
 		<table>
 			<s:iterator value="concerts">
 			<tr>
