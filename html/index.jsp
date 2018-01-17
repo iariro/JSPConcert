@@ -64,6 +64,10 @@
 					<s:submit value="月毎回数一覧" />
 				</s:form>
 
+				<s:form action="concertchronology" theme="simple">
+					<s:submit value="全コンサートの期間表示" />
+				</s:form>
+
 			</td>
 			<td>
 

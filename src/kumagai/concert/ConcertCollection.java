@@ -136,6 +136,28 @@ public class ConcertCollection
 	}
 
 	/**
+	 * 全オーケストラの全コンサートの期間を取得
+	 * @param connection DB接続オブジェクト
+	 * @param statement DBステートメント
+	 * @return 全オーケストラの全コンサートの期間
+	 */
+	static public ConcertRangeCollection getAllConcertRange(Connection connection, Statement statement)
+		throws SQLException
+	{
+		String sql = "select player.name, MIN(concert.date) as mindate, MAX(concert.date) as maxdate from Concert join Shutsuen on Shutsuen.concertId=Concert.id join Player on Player.id=Shutsuen.playerId where partId=1 group by Player.name order by max(concert.date)";
+
+		ResultSet result = statement.executeQuery(sql);
+		ConcertRangeCollection concertRanges = new ConcertRangeCollection();
+		while (result.next())
+		{
+			concertRanges.add(new ConcertRange(result));
+		}
+		result.close();
+
+		return concertRanges;
+	}
+
+	/**
 	 * DBからコンサート情報を取得しコレクションを生成する。
 	 * @param connection DB接続オブジェクト
 	 * @param statement1 DBステートメント１
