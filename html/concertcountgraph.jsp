@@ -23,6 +23,7 @@
 				chart: {renderTo: 'chart', zoomType:'xy', plotBackgroundColor: 'lightgray'},
 				title: {text: '登録件数'},
 				xAxis: {title: null, type: 'datetime'},
+				plotOptions: {series:{marker:{enabled:true}}},
 				series: [ <s:property value='concertCountPoints' /> ]
 			};
 			chart = new Highcharts.Chart(options);
