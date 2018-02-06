@@ -21,10 +21,29 @@
 
 		<div id="container" style="width:1300px; height:700px"></div>
 		<script type="text/javascript">
+		function dateFormat(date)
+		{
+			var y = date.getFullYear();
+			var m = date.getMonth() + 1;
+			var d = date.getDate();
+
+			if (m < 10)
+			{
+				m = '0' + m;
+			}
+			if (d < 10)
+			{
+				d = '0' + d;
+			}
+
+			return y + '/' + m + '/' + d;
+		}
+
 		Highcharts.chart('container', {
 		    chart: { type: 'columnrange', inverted: true },
 		    title: { text: 'コンサート期間' },
 		    yAxis: { title: { text: 'Date' }, type:'datetime' },
+		    tooltip: { formatter: function () { return '<b>' + this.point.name + '</b><br/>' + dateFormat(new Date(this.point.low)) + ' - ' + dateFormat(new Date(this.point.high));}},
 		    series:
 		    [{
 		        data:[ <s:property value="concertRanges" /> ]

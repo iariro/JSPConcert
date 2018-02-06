@@ -14,6 +14,7 @@ import org.apache.struts2.convention.annotation.Results;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
+import ktool.datetime.DateTime;
 import kumagai.concert.ConcertCollection;
 import kumagai.concert.ConcertRangeCollection;
 
@@ -54,7 +55,8 @@ public class ConcertChronologyGraphAction
 				Statement statement = connection.createStatement();
 				ConcertRangeCollection concertRanges =
 					ConcertCollection.getAllConcertRange(connection, statement);
-				this.concertRanges = concertRanges.generateHighchartsSeries();
+				DateTime today = new DateTime();
+				this.concertRanges = concertRanges.generateHighchartsSeries(today.getCalendar().getTimeInMillis());
 				statement.close();
 				connection.close();
 

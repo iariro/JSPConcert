@@ -328,6 +328,7 @@ public class ConcertInfoCrawler
 	/**
 	 * HTMLからコンサート情報を取得
 	 * @param reader HTML読み込みオブジェクト
+	 * @param lineCount 行数制限
 	 * @return コンサート情報
 	 */
 	static public String [] getConcertInfo(BufferedReader reader, int lineCount)

@@ -26,6 +26,7 @@ public class ConcertSchemaDocument
 
 	/**
 	 * テストコード
+	 * @param args 未使用
 	 */
 	public static void main(String[] args)
 		throws TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, IOException, SAXException, XPathExpressionException
