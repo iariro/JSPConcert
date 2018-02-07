@@ -16,8 +16,6 @@
 	<body>
 
 		<div class=hatena-body>
-		<div class=main>
-		<div class=day>
 
 		<div id="container" style="width:1300px; height:700px"></div>
 		<script type="text/javascript">
@@ -51,8 +49,6 @@
 		});
 		</script>
 
-		</div>
-		</div>
 		</div>
 
 	</body>
