@@ -13,7 +13,10 @@
 	</head>
 
 	<body>
-		<div id="chart" style="width:1300px; height:700px"></div>
+		<div class=hatena-body>
+		<div id="chart" style="width:1300px; height:800px"></div>
+		</div>
+
 		<script type="text/javascript">
 		function draw()
 		{
