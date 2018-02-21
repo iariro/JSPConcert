@@ -36,7 +36,7 @@
 				<tr bgcolor="#eeeeff">
 				<td>作曲家ランク</td>
 				<td>
-					<s:select name="composerRank" list="#{ '1':'1','2':'2','3':'3' }"/>
+					<s:select name="composerRank" list="#{ '1':'絞り込みなし','2':'まあまあ興味あり以上','3':'興味ありのみ' }"/>
 				</td>
 				</tr>
 				<tr><td colspan="2" align="center"><s:submit value="検索" /></td></tr>

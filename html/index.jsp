@@ -52,7 +52,7 @@
 				</s:form>
 
 				<s:form action="kongoconcert" theme="simple">
-					<s:select name="composerRank" list="#{ '1':'1','2':'2','3':'3' }"/>
+					<s:select name="composerRank" list="#{ '1':'絞り込みなし','2':'まあまあ興味あり以上','3':'興味ありのみ' }"/>
 					<s:submit value="今後のコンサート" />
 				</s:form>
 
