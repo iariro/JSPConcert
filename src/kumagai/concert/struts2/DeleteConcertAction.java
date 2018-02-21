@@ -1,43 +1,78 @@
 package kumagai.concert.struts2;
 
-import java.sql.*;
-import javax.servlet.*;
-import com.microsoft.sqlserver.jdbc.*;
-import org.apache.struts2.*;
-import org.apache.struts2.convention.annotation.*;
-import kumagai.concert.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+import javax.servlet.ServletContext;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+
+import kumagai.concert.ConcertCollection;
+import kumagai.concert.KyokumokuCollection;
+import kumagai.concert.ShutsuenCollection;
 
 /**
  * コンサート削除アクション。
  * @author kumagai
  */
 @Namespace("/concert")
-@Result(name="success", location="/concert/deleteconcert.jsp")
+@Results
+({
+	@Result(name="success", location="/concert/deleteconcert.jsp"),
+	@Result(name="error", location="/concert/error.jsp")
+})
 public class DeleteConcertAction
 {
 	public int id;
+
+	public String message;
 
 	/**
 	 * コンサート削除アクション。
 	 * @return 処理結果
 	 * @throws Exception
 	 */
-	@Action("editconcert8")
+	@Action("deleteconcert")
 	public String execute()
 		throws Exception
 	{
-		ServletContext context = ServletActionContext.getServletContext();
+		try
+		{
+			ServletContext context = ServletActionContext.getServletContext();
+			String url = context.getInitParameter("ConcertSqlserverUrl");
 
-		DriverManager.registerDriver(new SQLServerDriver());
+			if (url != null)
+			{
+				// パラメータあり
 
-		Connection connection =
-			DriverManager.getConnection
-				(context.getInitParameter("ConcertSqlserverUrl"));
+				DriverManager.registerDriver(new SQLServerDriver());
 
-		KyokumokuCollection.deleteTitle(connection, id);
-		ShutsuenCollection.deleteShutsuen(connection, id);
-		ConcertCollection.delete(connection, id);
+				Connection connection = DriverManager.getConnection (url);
 
-		return "success";
+				KyokumokuCollection.deleteTitle(connection, id);
+				ShutsuenCollection.deleteShutsuen(connection, id);
+				ConcertCollection.delete(connection, id);
+
+				return "success";
+			}
+			else
+			{
+				// パラメータなし
+
+				message = "ConcertSqlserverUrl定義なし";
+			}
+		}
+		catch (Exception exception)
+		{
+			message = exception.toString();
+		}
+
+		return "error";
 	}
 }
