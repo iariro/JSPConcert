@@ -292,7 +292,7 @@ public class ConcertInfoCrawler
 					fileError.printf("%s\ndb=%s:now=none\n", urlAndName.orchestra, urlAndName.date);
 				}
 			}
-			catch (IOException exception)
+			catch (Exception exception)
 			{
 				// URLなし・サーバエラー
 
