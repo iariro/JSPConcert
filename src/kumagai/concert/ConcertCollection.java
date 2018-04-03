@@ -80,7 +80,7 @@ public class ConcertCollection
 	static public LinkedHashMap<DateTime, Integer> getConcertCountPerUpdateDate(Connection connection, Statement statement)
 		throws SQLException
 	{
-		String sql = "select createdate, count(*) as count from concert group by createdate order by createdate";
+		String sql = "select convert(date,createdate) as createdate, count(*) as count from concert group by convert(date,createdate) order by convert(date,createdate)";
 
 		ResultSet result = statement.executeQuery(sql);
 
