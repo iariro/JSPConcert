@@ -298,14 +298,6 @@ public class NewConcertDocument
 							continue;
 						}
 
-						if (line.endsWith("円"))
-						{
-							// 料金情報を含む。
-
-							concert.ryoukin = line;
-							continue;
-						}
-
 						if (line.endsWith("無料"))
 						{
 							// 料金情報を含む。
@@ -313,16 +305,14 @@ public class NewConcertDocument
 							concert.ryoukin = "入場無料";
 							continue;
 						}
-
-						if (line.indexOf("全席自由") >= 0)
+						else if (line.indexOf("全席自由") >= 0)
 						{
 							// 料金情報を含む。
 
 							concert.ryoukin = line;
 							continue;
 						}
-
-						if (line.startsWith("入場料"))
+						else if (line.startsWith("入場料"))
 						{
 							// 料金情報を含む。
 
@@ -342,13 +332,19 @@ public class NewConcertDocument
 								continue;
 							}
 						}
-
-						if (line.startsWith("料金"))
+						else if (line.startsWith("料金"))
 						{
 							// 料金情報を含む。
 
 							concert.ryoukin =
 								patternRyoukin2.matcher(line).replaceAll(empty);
+							continue;
+						}
+						else if (line.endsWith("円"))
+						{
+							// 料金情報を含む。
+
+							concert.ryoukin = line;
 							continue;
 						}
 
@@ -675,7 +671,7 @@ public class NewConcertDocument
 			concert.setAttribute("name", concertInformation.name);
 			concert.setAttribute("date", concertInformation.date);
 			concert.setAttribute("kaijou", concertInformation.getKaijou());
-			concert.setAttribute("kaien", concertInformation.kaien);
+			concert.setAttribute("kaien", concertInformation.getKaien());
 			concert.setAttribute("hall", concertInformation.hall);
 			concert.setAttribute("ryoukin", concertInformation.ryoukin);
 
