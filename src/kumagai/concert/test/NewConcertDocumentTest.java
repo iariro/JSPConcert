@@ -168,4 +168,30 @@ public class NewConcertDocumentTest
 		assertEquals("ラフマニノフ", concert.composerNameAndTitles.get(3).string1);
 		assertEquals("交響曲第２番", concert.composerNameAndTitles.get(3).string2);
 	}
+
+	public void testGalimatias201907()
+		throws FileNotFoundException, IOException
+	{
+		String [] lines = new StringListFromFile("testdata/concert_Galimatias201907.txt").toArray(new String[]{});
+		ConcertInformation concert =
+			NewConcertDocument.trimConcertInfo(0, "ガリマティアス・ムジクム", lines, halls, composers, partNames, playerNames);
+
+		assertEquals("第３９回定期演奏会", concert.name);
+		assertEquals("2019/7/28", concert.date);
+		assertEquals("13:30", concert.getKaijou());
+		assertEquals("14:00", concert.getKaien());
+		assertEquals("800円（中学生以下は無料）", concert.ryoukin);
+		assertEquals(2, concert.partAndPlayers.size());
+		assertEquals("管弦楽", concert.partAndPlayers.get(0).string1);
+		assertEquals("ガリマティアス・ムジクム", concert.partAndPlayers.get(0).string2);
+		assertEquals("指揮", concert.partAndPlayers.get(1).string1);
+		assertEquals("広井 隆", concert.partAndPlayers.get(1).string2);
+		assertEquals(3, concert.composerNameAndTitles.size());
+		assertEquals("メンデルスゾーン", concert.composerNameAndTitles.get(0).string1);
+		assertEquals("「真夏の夜の夢」序曲", concert.composerNameAndTitles.get(0).string2);
+		assertEquals("モーツァルト", concert.composerNameAndTitles.get(1).string1);
+		assertEquals("交響曲第４１番 「ジュピター」", concert.composerNameAndTitles.get(1).string2);
+		assertEquals("ベートーヴェン", concert.composerNameAndTitles.get(2).string1);
+		assertEquals("交響曲第６番 「田園」", concert.composerNameAndTitles.get(2).string2);
+	}
 }

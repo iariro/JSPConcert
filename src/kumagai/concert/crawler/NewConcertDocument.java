@@ -41,8 +41,8 @@ public class NewConcertDocument
 	static private final String empty = new String();
 	static private final Pattern patternEnsoukai1 = Pattern.compile(".*(第.*回演奏会).*");
 	static private final Pattern patternEnsoukai2 = Pattern.compile(".*(第.*回定期演奏会).*");
-	static private final Pattern patternDate1 = Pattern.compile("[^0-9]*([0-9０-９]*)年[ 　]*([0-9０-９]*)月[ 　]*([0-9０-９]*)日.*");
-	static private final Pattern patternDate2 = Pattern.compile(".*[０-９]{4}年[０-９]*月[０-９]*日.*");
+	static private final Pattern patternDate1 = Pattern.compile("[^0-9]*([0-9０-９]{4})年[ 　]*([0-9０-９]*)月[ 　]*([0-9０-９]*)日.*");
+	//static private final Pattern patternDate2 = Pattern.compile(".*[０-９]{4}年[０-９]*月[０-９]*日.*");
 	static private final Pattern patternDate3 = Pattern.compile("[^0-9]*[0-9]{2}[/.][0-9]*[/.][0-9]*.*");
 	static private final Pattern patternDate4 = Pattern.compile("[^0-9]*([0-9]{4})/([0-9]*)/([0-9]*).*");
 	static private final Pattern patternKaijouKaien1 = Pattern.compile(".*[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開場[0-9０-９][0-9０-９][:：][0-9０-９][0-9０-９] *開演.*");
@@ -55,7 +55,7 @@ public class NewConcertDocument
 	static private final Pattern patternKaien4 = Pattern.compile(".*([0-9０-９][0-9０-９])時開演.*");
 	static private final Pattern patternKaien5 = Pattern.compile(".*午後([0-9０-９])時開演.*");
 	static private final Pattern patternKaien6 = Pattern.compile(".*開演[ 　]*：* *([0-9][0-9])[:：]([0-9][0-9]).*");
-	static private final Pattern patternRyoukin1 = Pattern.compile("入場料[:：]* *");
+	static private final Pattern patternRyoukin1 = Pattern.compile("[ 　]*入場料[:：]* *(.*)");
 	static private final Pattern patternRyoukin2 = Pattern.compile("料金[:：]* *");
 
 	static public void main(String[] args)
@@ -184,6 +184,7 @@ public class NewConcertDocument
 							concert.setDate(patternDate1.matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
+						/*
 						else if (patternDate2.matcher(line).matches())
 						{
 							// ｙｙｙｙ年ｍｍ月ｄｄ日
@@ -191,6 +192,7 @@ public class NewConcertDocument
 							concert.setDate(patternDate2.matcher(line).replaceAll("$1/$2/$3"));
 							kakutei = true;
 						}
+						*/
 						else if (patternDate3.matcher(line).matches())
 						{
 							// yy/mm/dd or yy.mm.dd
@@ -312,7 +314,7 @@ public class NewConcertDocument
 							concert.ryoukin = line;
 							continue;
 						}
-						else if (line.startsWith("入場料"))
+						else if (line.indexOf("入場料") >= 0)
 						{
 							// 料金情報を含む。
 
@@ -328,7 +330,7 @@ public class NewConcertDocument
 								// 料金情報を含む。
 
 								concert.ryoukin =
-									patternRyoukin1.matcher(line).replaceAll(empty);
+									patternRyoukin1.matcher(line).replaceAll("$1");
 								continue;
 							}
 						}
@@ -409,11 +411,11 @@ public class NewConcertDocument
 
 						for (int j = 0; j < composers.length; j++)
 						{
-							if (Pattern.matches(".*" + composers[j] + "[ \t]*[/:／：…　][ \t]*.*", line))
+							if (Pattern.matches(".*" + composers[j] + "[ 　\t]*[/:／：…　][ \t]*.*", line))
 							{
 								// 作曲家：曲名の形式。
 
-								line = Pattern.compile(".*" + composers[j] + "[ \t]*[/:／：…　][ \t]*").matcher(line).replaceAll(empty);
+								line = Pattern.compile(".*" + composers[j] + "[ 　\t]*[/:／：…　][ \t]*").matcher(line).replaceAll(empty);
 								line = Pattern.compile("曲　*目：").matcher(line).replaceAll(empty);
 
 								concert.addComposer(composers[j]);
