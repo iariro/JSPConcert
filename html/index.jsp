@@ -121,6 +121,10 @@
 					<s:submit value="コンサート登録数" />
 				</s:form>
 
+				<s:form action="recentaddedconcert" theme="simple">
+					<s:submit value="直近登録コンサート情報" />
+				</s:form>
+
 			</td>
 			<td>
 

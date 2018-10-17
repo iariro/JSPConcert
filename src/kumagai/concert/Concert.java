@@ -1,7 +1,13 @@
 package kumagai.concert;
 
-import java.sql.*;
-import java.text.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+
+import ktool.datetime.DateTime;
 
 /**
  * コンサート情報。
@@ -39,6 +45,7 @@ public class Concert
 	public final KyokumokuCollection kyokumoku;
 	public final ShutsuenCollection shutsuen;
 	public final boolean listen;
+	public final String createdate;
 
 	/**
 	 * コンサートID取得。
@@ -161,7 +168,6 @@ public class Concert
 	 * DB取得値からオブジェクトを構築する。
 	 * @param connection DB接続オブジェクト
 	 * @param result DB取得レコード
-	 * @throws SQLException
 	 */
 	public Concert(Connection connection, ResultSet result)
 		throws SQLException
@@ -176,6 +182,7 @@ public class Concert
 		hall = result.getString("hallname");
 		ryoukin = result.getString("ryoukin");
 		listen = result.getInt("listencount") > 0;
+		createdate = new DateTime(result.getDate("createdate")).toString();
 
 		kyokumoku = new KyokumokuCollection(connection, id);
 		shutsuen = new ShutsuenCollection(connection, id);

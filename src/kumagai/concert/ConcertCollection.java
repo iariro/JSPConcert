@@ -74,14 +74,14 @@ public class ConcertCollection
 	/**
 	 * 更新日ごとの登録件数を取得
 	 * @param connection DB接続オブジェクト
-	 * @param statement DBステートメント
 	 * @return 更新日ごとの登録件数コレクション
 	 */
-	static public LinkedHashMap<DateTime, Integer> getConcertCountPerUpdateDate(Connection connection, Statement statement)
+	static public LinkedHashMap<DateTime, Integer> getConcertCountPerUpdateDate(Connection connection)
 		throws SQLException
 	{
 		String sql = "select convert(date,createdate) as createdate, count(*) as count from concert group by convert(date,createdate) order by convert(date,createdate)";
 
+		Statement statement = connection.createStatement();
 		ResultSet result = statement.executeQuery(sql);
 
 		LinkedHashMap<DateTime, Integer> concertCounts = new LinkedHashMap<DateTime, Integer>();
@@ -105,6 +105,7 @@ public class ConcertCollection
 			}
 		}
 		result.close();
+		statement.close();
 
 		for (Entry<DateTime, Integer> entry : concertCounts.entrySet())
 		{
@@ -112,6 +113,41 @@ public class ConcertCollection
 		}
 
 		return concertCounts;
+	}
+
+	/**
+	 * 直近数回のコンサート情報を取得
+	 * @param connection DB接続オブジェクト
+	 * @param count 指定回数
+	 * @return 更新日ごとの登録件数コレクション
+	 */
+	static public LinkedHashMap<String, ArrayList<Concert>> getRecentAddedConcerts(Connection connection, int count)
+		throws SQLException
+	{
+		String sql = String.format("select Concert.id as concertid, Player.name as playername, Concert.name as concertname, Concert.date, Concert.kaijou, Concert.kaien, Hall.id as hallid, Hall.name as hallname, Concert.ryoukin, createdate, (select count(*) from Listen where concertid=Concert.id) as listencount from Concert" +
+			" join Shutsuen on Shutsuen.concertId=Concert.id" +
+			" join Player on Player.id=Shutsuen.playerId" +
+			" join Hall on Hall.id=Concert.hallid" +
+			" where Shutsuen.partId=1 and cast(createdate as date) in (select top %d cast(createdate as date) from Concert group by cast(createdate as date) order by cast(createdate as date) desc) order by cast(createdate as date) desc, date", count);
+
+		PreparedStatement statement = connection.prepareStatement(sql);
+		ResultSet result = statement.executeQuery();
+
+		LinkedHashMap<String, ArrayList<Concert>> concerts =
+			new LinkedHashMap<String, ArrayList<Concert>>();
+		while (result.next())
+		{
+			Concert concert = new Concert(connection, result);
+			if (!concerts.containsKey(concert.createdate))
+			{
+				concerts.put(concert.createdate, new ArrayList<Concert>());
+			}
+			concerts.get(concert.createdate).add(concert);
+		}
+		result.close();
+		statement.close();
+
+		return concerts;
 	}
 
 	/**
@@ -174,7 +210,7 @@ public class ConcertCollection
 
 			String sql =
 				String.format(
-					"select Concert.id as concertid, Player.name as playername, Concert.name as concertname, Concert.date, Concert.kaijou, Concert.kaien, Hall.id as hallid, Hall.name as hallname, Concert.ryoukin, (select count(*) from Listen where concertid=Concert.id) as listencount from Concert join Shutsuen on Shutsuen.concertId=Concert.id join Player on Player.id=Shutsuen.playerId join Hall on Hall.id=Concert.hallid where Shutsuen.partId=1 and Concert.id in %s order by concert.date",
+					"select Concert.id as concertid, Player.name as playername, Concert.name as concertname, Concert.date, Concert.kaijou, Concert.kaien, Hall.id as hallid, Hall.name as hallname, Concert.ryoukin, createdate, (select count(*) from Listen where concertid=Concert.id) as listencount from Concert join Shutsuen on Shutsuen.concertId=Concert.id join Player on Player.id=Shutsuen.playerId join Hall on Hall.id=Concert.hallid where Shutsuen.partId=1 and Concert.id in %s order by concert.date",
 					idCollection);
 
 			ResultSet result = statement1.executeQuery(sql);
