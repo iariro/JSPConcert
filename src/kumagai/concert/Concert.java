@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 import ktool.datetime.DateTime;
@@ -182,7 +183,15 @@ public class Concert
 		hall = result.getString("hallname");
 		ryoukin = result.getString("ryoukin");
 		listen = result.getInt("listencount") > 0;
-		createdate = new DateTime(result.getDate("createdate")).toString();
+		Timestamp date = result.getTimestamp("createdate");
+		if (date != null)
+		{
+			createdate = new DateTime(date).toString();
+		}
+		else
+		{
+			createdate = null;
+		}
 
 		kyokumoku = new KyokumokuCollection(connection, id);
 		shutsuen = new ShutsuenCollection(connection, id);
