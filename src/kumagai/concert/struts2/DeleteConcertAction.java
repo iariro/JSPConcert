@@ -29,7 +29,8 @@ import kumagai.concert.ShutsuenCollection;
 })
 public class DeleteConcertAction
 {
-	public int id;
+	public boolean sure;
+	public int concertId;
 
 	public String message;
 
@@ -42,6 +43,12 @@ public class DeleteConcertAction
 	public String execute()
 		throws Exception
 	{
+		if (!sure)
+		{
+			message = "「本当に削除する」をチェックして再度実行してください";
+			return "error";
+		}
+
 		try
 		{
 			ServletContext context = ServletActionContext.getServletContext();
@@ -55,9 +62,9 @@ public class DeleteConcertAction
 
 				Connection connection = DriverManager.getConnection (url);
 
-				KyokumokuCollection.deleteTitle(connection, id);
-				ShutsuenCollection.deleteShutsuen(connection, id);
-				ConcertCollection.delete(connection, id);
+				KyokumokuCollection.deleteTitle(connection, concertId);
+				ShutsuenCollection.deleteShutsuen(connection, concertId);
+				ConcertCollection.delete(connection, concertId);
 
 				return "success";
 			}

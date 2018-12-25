@@ -205,5 +205,23 @@
 			</div>
 		</s:if>
 
+		<div class=hatena-body>
+		<div class=main>
+		<div class=day>
+		<h2><span class=title>コンサート情報削除</span></h2>
+		<div class=body>
+
+			<s:form action="deleteconcert" theme="simple">
+				<input type="hidden" name="concertId" value="<s:property value="id" />">
+
+				<s:checkbox name="sure"/>本当に削除する<br>
+				<s:submit value="削除" />
+			</s:form>
+
+		</div>
+		</div>
+		</div>
+		</div>
+
 	</body>
 </html>
