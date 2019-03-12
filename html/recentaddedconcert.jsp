@@ -18,7 +18,8 @@
 
 		<h2>直近に登録したコンサート情報</h2>
 		<s:iterator value="concerts">
-			<h3><s:property value="key"/> <s:property value="%{value.size()}"/>件</h3>
+			<h3><s:property value="key"/></h3>
+			<s:property value="%{value.size()}"/>件
 			<table>
 				<s:iterator value="value">
 				<tr>
