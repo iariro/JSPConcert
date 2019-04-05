@@ -36,8 +36,11 @@
 				</s:iterator>
 			</table>
 
+			<div onclick="obj=document.getElementById('inactive').style; obj.display=(obj.display=='none')?'block':'none';">
 			<h2>活動が見られない楽団</h2>
+			</div>
 			<s:property value="size2" />件あります。
+			<div id="inactive" style="display:none;">
 			<table>
 				<s:iterator value="pastOrchestraList2">
 				<tr>
@@ -54,6 +57,7 @@
 				</tr>
 				</s:iterator>
 			</table>
+			</div>
 
 			<h2>活動中の楽団</h2>
 			<s:property value="size3" />件あります。
