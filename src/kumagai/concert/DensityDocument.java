@@ -1,15 +1,27 @@
 package kumagai.concert;
 
-import java.awt.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import org.w3c.dom.*;
-import ktool.db.*;
-import ktool.db.postgre.*;
-import ktool.xml.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import ktool.db.KConnection;
+import ktool.db.postgre.PostgreConnection;
+import ktool.db.postgre.PostgreDbUrl;
+import ktool.xml.KDocument;
 
 /**
  * 日ごとのコンサートの分量をSVG形式でグラフ化。
@@ -25,7 +37,7 @@ public class DensityDocument
 	/**
 	 * 表の左上隅の座標。
 	 */
-	static private final Point location = new Point(50, 20);
+	static private final Point location = new Point(70, 20);
 
 	/**
 	 * DensityDocumentクラスのテスト。
@@ -108,11 +120,11 @@ public class DensityDocument
 			// 年数。
 			element = createElement("text");
 			element.setAttribute
-				("x", String.valueOf(location.x - 40));
+				("x", String.valueOf(location.x - 60));
 			element.setAttribute
 				("y", String.valueOf(location.y + 13 + size.height * i));
 			element.appendChild
-				(createTextNode(String.valueOf(start + i)));
+				(createTextNode(String.format("%d年", start + i)));
 			top.appendChild(element);
 		}
 
