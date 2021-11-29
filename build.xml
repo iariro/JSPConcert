@@ -60,6 +60,7 @@
 		<copy todir="${TOMCAT_SITE_HOME}/WEB-INF/classes">
 			<fileset dir="bin">
 				<include name="kumagai/concert/*.class" />
+				<include name="kumagai/concert/servlet/*.class" />
 				<include name="kumagai/concert/struts2/*.class" />
 				<include name="kumagai/sql/*.class" />
 			</fileset>
