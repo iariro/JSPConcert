@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
+import ktool.datetime.DateTime;
+
 public class PastOrchestraListServlet
 	extends HttpServlet
 {
@@ -46,8 +48,8 @@ public class PastOrchestraListServlet
 				String url = result.getString("url");
 				String siteencoding = result.getString("siteencoding");
 				int active = result.getInt("active");
-				String lastdate = result.getString("lastdate");
-				writer.printf("%s,%s,%s,%d,%s\n", title, url, siteencoding, active, lastdate);
+				DateTime lastdate = new DateTime(result.getDate("lastdate"));
+				writer.printf("%s,%s,%s,%d,%s\n", title, url, siteencoding, active, lastdate.toString());
 			}
 		}
 		catch (SQLException e)
