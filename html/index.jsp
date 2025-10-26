@@ -132,10 +132,6 @@
 					<s:submit value="参照されてないデータを検索" />
 				</s:form>
 
-				<s:form action="umncheck" theme="simple">
-					<s:submit value="UMNチェック" />
-				</s:form>
-
 			</td>
 			</tr>
 		</table>

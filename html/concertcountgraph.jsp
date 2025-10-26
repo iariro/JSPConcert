@@ -23,6 +23,7 @@
 			Highcharts.setOptions({ global: { useUTC: false } });
 			options =
 			{
+				time: { useUTC: false },
 				chart: {renderTo: 'chart', zoomType:'xy', plotBackgroundColor: 'lightgray'},
 				title: {text: '登録件数'},
 				xAxis: {title: null, type: 'datetime'},
